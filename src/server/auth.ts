@@ -1,6 +1,8 @@
 import { type NextAuthOptions, type DefaultSession } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import { env } from '~/utils/env.mjs';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from 'prisma/client';
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
@@ -18,19 +20,18 @@ declare module 'next-auth' {
 }
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   callbacks: {
-    session: ({ session, token }) => ({
+    session: ({ session, user }) => ({
       ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
+      user,
     }),
   },
   providers: [
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+      authorization: { params: { scope: ['identify'].join(' ') } },
     }),
   ],
 };
