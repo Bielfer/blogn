@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
-import Spinner from '@/components/core/Spinner';
+import Spinner from '~/components/spinner';
 import clsx from 'clsx';
-import { IconType } from '@/types/core';
+import { IconType } from '~/types/core';
 
 export type ButtonProps = {
   className?: string;
@@ -74,7 +74,7 @@ const Button: FC<ButtonProps> = ({
           )}
           {children}
           {IconRight && (
-            <IconRight className="ml-2 -mr-0.5 h-5 w-5 flex-shrink-0" />
+            <IconRight className="-mr-0.5 ml-2 h-5 w-5 flex-shrink-0" />
           )}
         </>
       )}
