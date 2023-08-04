@@ -1,22 +1,28 @@
 import '~/styles/globals.css';
-import { getServerSession } from 'next-auth';
 import { type FC } from 'react';
 import ClientProviders from '~/app/client-providers';
-import { authOptions } from '~/server/auth';
+import { ClerkProvider } from '@clerk/nextjs';
 
 type Props = {
   children: React.ReactNode;
 };
 
-const RootLayout: FC<Props> = async ({ children }) => {
-  const session = await getServerSession(authOptions);
-
+const RootLayout: FC<Props> = ({ children }) => {
   return (
-    <html lang="en">
-      <body>
-        <ClientProviders session={session}>{children}</ClientProviders>
-      </body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: 'black',
+          colorText: 'black',
+        },
+      }}
+    >
+      <html lang="en">
+        <body>
+          <ClientProviders>{children}</ClientProviders>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 };
 
