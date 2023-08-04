@@ -1,7 +1,7 @@
 import '~/styles/globals.css';
 import { getServerSession } from 'next-auth';
 import { type FC } from 'react';
-import { ClientProviders } from '~/components/client-providers';
+import ClientProviders from '~/app/client-providers';
 import { authOptions } from '~/server/auth';
 
 type Props = {

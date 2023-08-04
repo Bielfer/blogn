@@ -2,8 +2,13 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { trpc } from '~/services/trpc';
 
 export default function Home() {
+  const { data } = trpc.temp.useQuery();
+
+  console.log(data);
+
   return (
     <>
       <Head>
