@@ -1,8 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { IconType } from '~/types/core';
-import { Url } from 'url';
+import { type IconType } from '~/types/core';
+import { type Url } from 'url';
 import { buttonSizes } from '../button';
 import Spinner from '../spinner';
 
@@ -27,11 +27,13 @@ export const variantStyles = {
     'rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900',
   error: 'rounded-lg text-red-700 hover:bg-red-100 hover:text-red-900',
   'button-primary':
-    'border border-transparent text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+    'border border-transparent text-white bg-primary-900 hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-700',
   'button-secondary':
     'border border-transparent text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
   'button-white':
     'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
+  'button-danger':
+    'border border-transparent text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500',
 };
 
 const MyLink: FC<MyLinkProps> = ({
