@@ -1,9 +1,14 @@
-export type IconType = React.ComponentType<React.ComponentProps<'svg'>>;
+export type IconType = React.ForwardRefExoticComponent<
+  Omit<React.SVGProps<SVGSVGElement>, 'ref'> & {
+    title?: string | undefined;
+    titleId?: string | undefined;
+  } & React.RefAttributes<SVGSVGElement>
+>;
 
 export type ObjectEntries<T> = [keyof T, T[keyof T]][];
 
 export type ChangeTypeOfKeys<
-  T extends Object,
+  T extends object,
   Keys extends keyof T,
   NewType
 > = {
