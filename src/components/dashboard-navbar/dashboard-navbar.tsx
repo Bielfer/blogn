@@ -7,6 +7,7 @@ import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '../logo';
+import Container from '../container';
 
 export type Item = {
   name: string;
@@ -26,7 +27,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
       <Disclosure as="nav" className="border-b border-gray-200 bg-white">
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Container>
               <div className="flex h-16 justify-between">
                 <div className="flex">
                   <div className="flex flex-shrink-0 items-center">
@@ -68,7 +69,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                   </Disclosure.Button>
                 </div>
               </div>
-            </div>
+            </Container>
 
             <Disclosure.Panel className="sm:hidden">
               <div className="space-y-1 pb-3 pt-2">
@@ -102,9 +103,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
 
       <div className="overflow-y-auto pt-10">
         <main className="max-h-full">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {children}
-          </div>
+          <Container>{children}</Container>
         </main>
       </div>
     </div>
