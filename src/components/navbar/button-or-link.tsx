@@ -5,15 +5,21 @@ type Props = Item & {
   className?: string;
 };
 
-const ButtonOrLink: FC<Props> = ({ href, icon, name, action, className }) =>
+const ButtonOrLink: FC<Props> = ({
+  href,
+  icon: Icon,
+  name,
+  action,
+  className,
+}) =>
   !!href ? (
     <a href={href} className={className}>
-      {!!icon && <icon.type {...icon.props} className="h-6" />}
+      {!!Icon && <Icon className="h-6" />}
       <span>{name}</span>
     </a>
   ) : (
     <button className={className} onClick={action}>
-      {!!icon && <icon.type {...icon.props} className="h-6" />}
+      {!!Icon && <Icon className="h-6" />}
       <span>{name}</span>
     </button>
   );
