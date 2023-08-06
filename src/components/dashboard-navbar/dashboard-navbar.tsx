@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Logo from '../logo';
 
 export type Item = {
   name: string;
@@ -29,16 +30,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
               <div className="flex h-16 justify-between">
                 <div className="flex">
                   <div className="flex flex-shrink-0 items-center">
-                    <img
-                      className="block h-8 w-auto lg:hidden"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=primary&shade=600"
-                      alt="Your Company"
-                    />
-                    <img
-                      className="hidden h-8 w-auto lg:block"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=primary&shade=600"
-                      alt="Your Company"
-                    />
+                    <Logo />
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {items?.map((item) => {
