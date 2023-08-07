@@ -15,9 +15,7 @@ const Posts: FC = () => {
   return (
     <DashboardNavbar items={dashboardPaths}>
       <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
-          Posts
-        </h1>
+        <h1>Posts</h1>
         <MyLink
           href={paths.newPost}
           iconRight={PlusIcon}
