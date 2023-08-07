@@ -11,6 +11,7 @@ export type Item = {
   href?: string;
   icon?: IconType;
   action?: () => void;
+  buttonType?: 'submit' | 'button';
 };
 
 type Props = {

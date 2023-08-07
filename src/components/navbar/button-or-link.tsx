@@ -11,6 +11,7 @@ const ButtonOrLink: FC<Props> = ({
   name,
   action,
   className,
+  buttonType,
 }) =>
   !!href ? (
     <a href={href} className={className}>
@@ -18,7 +19,7 @@ const ButtonOrLink: FC<Props> = ({
       <span>{name}</span>
     </a>
   ) : (
-    <button className={className} onClick={action}>
+    <button className={className} onClick={action} type={buttonType}>
       {!!Icon && <Icon className="h-6" />}
       <span>{name}</span>
     </button>
