@@ -28,6 +28,9 @@ const config = {
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-call': 'off',
     '@next/next/no-img-element': 'off',
+    '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
   },
 };
 
