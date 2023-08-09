@@ -103,7 +103,7 @@ const Calendar: FC<Props> = ({
                 )
               }
             >
-              <Listbox.Button className="flex items-center gap-x-1 text-left focus:outline-0">
+              <Listbox.Button className="flex items-center gap-x-1 text-left focus:outline-0 focus:ring-0">
                 {getYear(calendarDate)}
                 <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
               </Listbox.Button>
