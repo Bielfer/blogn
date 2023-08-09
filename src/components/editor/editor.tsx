@@ -69,7 +69,17 @@ const Editor: FC = () => {
     };
   }, []);
 
-  return <div id={holder} className="prose" />;
+  return (
+    <div
+      id={holder}
+      className="prose"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Tab') e.preventDefault();
+        console.log(e.key);
+      }}
+    />
+  );
 };
 
 export default memo(Editor);
