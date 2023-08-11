@@ -13,7 +13,7 @@ const Title: FC = () => {
   return (
     <div className="relative text-4xl font-bold">
       {value.length < 1 && (
-        <div className="absolute text-gray-500">Post title</div>
+        <div className="absolute -z-10 text-gray-500">Post title</div>
       )}
       <div
         ref={ref}
