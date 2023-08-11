@@ -76,7 +76,6 @@ const Editor: FC = () => {
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Tab') e.preventDefault();
-        console.log(e.key);
       }}
     />
   );
