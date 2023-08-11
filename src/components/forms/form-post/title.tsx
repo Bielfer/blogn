@@ -3,7 +3,7 @@ import { useEffect, type FC, useRef } from 'react';
 
 const Title: FC = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const [{ value }, { initialValue }, { setValue }] = useField<string>('title');
+  const [, { initialValue }, { setValue }] = useField<string>('title');
 
   useEffect(() => {
     if (!ref.current) return;
@@ -12,7 +12,7 @@ const Title: FC = () => {
 
   return (
     <div className="relative text-4xl font-bold">
-      {value.length < 1 && (
+      {!ref.current?.textContent && (
         <div className="absolute -z-10 text-gray-500">Post title</div>
       )}
       <div
