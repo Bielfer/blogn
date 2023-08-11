@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { type ChangeEvent, type FC } from 'react';
 import InputLayout from '../input-layout';
+import cn from '~/helpers/cn';
 
 interface Props {
   label?: string | null;
@@ -14,6 +15,8 @@ interface Props {
   disabled?: boolean;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  help?: string;
+  leftAddOn?: string;
 }
 
 const Input: FC<Props> = ({
@@ -28,6 +31,8 @@ const Input: FC<Props> = ({
   disabled,
   value,
   onChange,
+  help,
+  leftAddOn,
 }) => (
   <InputLayout
     name={name}
@@ -35,23 +40,34 @@ const Input: FC<Props> = ({
     error={error}
     hint={hint}
     label={label}
-    shadow
+    help={help}
   >
-    <input
-      onChange={onChange}
-      value={value}
-      className={clsx(
-        'block w-full rounded-lg border',
-        disabled && 'bg-gray-200',
+    <div
+      className={cn(
+        'flex overflow-hidden rounded-lg border shadow-sm focus-within:ring-1',
         !error
-          ? 'border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
-          : 'border-red-300 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm'
+          ? 'border-gray-300 shadow-sm focus-within:border-primary-500 focus-within:ring-primary-500 '
+          : 'border-red-300 pr-10 text-red-900 placeholder-red-300 focus-within:border-red-500 focus-within:outline-none focus-within:ring-red-500'
       )}
-      placeholder={placeholder}
-      type={password ? 'password' : type ?? 'text'}
-      id={name}
-      disabled={disabled}
-    />
+    >
+      {!!leftAddOn && (
+        <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
+          {leftAddOn}
+        </span>
+      )}
+      <input
+        onChange={onChange}
+        value={value}
+        className={clsx(
+          'block w-full border-0 focus:ring-0 sm:text-sm',
+          disabled && 'bg-gray-200'
+        )}
+        placeholder={placeholder}
+        type={password ? 'password' : type ?? 'text'}
+        id={name}
+        disabled={disabled}
+      />
+    </div>
   </InputLayout>
 );
 

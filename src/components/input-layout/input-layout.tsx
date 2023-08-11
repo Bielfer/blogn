@@ -1,5 +1,4 @@
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
 import { type ReactNode } from 'react';
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
   className?: string;
   name?: string;
   children: ReactNode;
-  shadow?: boolean;
+  help?: string;
 }
 
 const InputLayout = ({
@@ -19,7 +18,7 @@ const InputLayout = ({
   className,
   name,
   children,
-  shadow,
+  help,
 }: Props) => (
   <div className={className}>
     {label && (
@@ -32,7 +31,7 @@ const InputLayout = ({
         )}
       </div>
     )}
-    <div className={clsx('relative', shadow && 'shadow-sm')}>
+    <div className="relative">
       {children}
 
       {!!error && (
@@ -47,6 +46,11 @@ const InputLayout = ({
     {!!error && (
       <p className="mt-2 text-sm text-red-600" id="error">
         {error}
+      </p>
+    )}
+    {!!help && (
+      <p className="mt-2 text-sm text-gray-500" id="email-description">
+        {help}
       </p>
     )}
   </div>
