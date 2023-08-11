@@ -4,9 +4,9 @@ import {
   EyeIcon,
   RocketLaunchIcon,
 } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Form, Formik, useFormikContext } from 'formik';
 import dynamic from 'next/dynamic';
-import { type FC, useState } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import Container from '~/components/container';
 import Modal from '~/components/modal';
 import Navbar from '~/components/navbar';
@@ -16,11 +16,16 @@ import Title from './title';
 import { UserButton, useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
 import { paths } from '~/constants/paths';
+import { useLocalStorage } from 'react-use';
+import { localStorageKeys } from '~/constants/local-storage';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
 const FormPost: FC = () => {
   const { isSignedIn } = useAuth();
+  const [localStorageValues] = useLocalStorage<typeof initialValues>(
+    localStorageKeys.formPost
+  );
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -56,8 +61,12 @@ const FormPost: FC = () => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={localStorageValues ?? initialValues}
+      onSubmit={handleSubmit}
+    >
       <Form>
+        <SaveFormToLocalStorage />
         <Modal
           className="w-full max-w-md"
           isOpen={isSettingsOpen}
@@ -101,6 +110,17 @@ const FormPost: FC = () => {
       </Form>
     </Formik>
   );
+};
+
+const SaveFormToLocalStorage: FC = () => {
+  const [, setStorageValues] = useLocalStorage(localStorageKeys.formPost);
+  const { values } = useFormikContext();
+
+  useEffect(() => {
+    setStorageValues(values);
+  }, [values, setStorageValues]);
+
+  return null;
 };
 
 export default FormPost;
