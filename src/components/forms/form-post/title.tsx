@@ -17,7 +17,7 @@ const Title: FC = () => {
       )}
       <div
         ref={ref}
-        className="mb-6 w-full border-0 p-0 focus:outline-none focus:ring-0"
+        className="mb-6 min-h-[5rem] w-full border-0 p-0 focus:outline-none focus:ring-0"
         contentEditable
         onInput={(e) => {
           setValue(e.currentTarget.textContent ?? '');
