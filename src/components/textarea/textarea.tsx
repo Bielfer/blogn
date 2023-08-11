@@ -33,14 +33,13 @@ const Textarea: FC<Props> = ({
     error={error}
     hint={hint}
     label={label}
-    shadow
   >
     <textarea
       value={value}
       onChange={(e) => setValue(e.target.value)}
       placeholder={placeholder}
       className={clsx(
-        'block w-full rounded-lg border',
+        'block w-full rounded-lg border shadow-sm',
         disabled && 'bg-gray-200',
         !error
           ? 'border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
