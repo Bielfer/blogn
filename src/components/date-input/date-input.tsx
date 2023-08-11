@@ -37,12 +37,11 @@ const DateInput: FC<Props> = ({
         error={error}
         hint={hint}
         label={label}
-        shadow
       >
         <button
           type="button"
           className={clsx(
-            'block w-full rounded-lg border py-2 pl-3 pr-10 text-left',
+            'block w-full rounded-lg border py-2 pl-3 pr-10 text-left shadow-sm',
             disabled && 'bg-gray-200 text-gray-600',
             !error
               ? 'border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
