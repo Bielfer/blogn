@@ -1,4 +1,5 @@
 'use client';
+import { ToastContainer } from '~/components/toast';
 import { TrpcProvider } from './trpc-provider';
 import { type FC } from 'react';
 
@@ -7,7 +8,12 @@ type Props = {
 };
 
 const ClientProviders: FC<Props> = ({ children }) => {
-  return <TrpcProvider>{children}</TrpcProvider>;
+  return (
+    <TrpcProvider>
+      {children}
+      <ToastContainer />
+    </TrpcProvider>
+  );
 };
 
 export default ClientProviders;
