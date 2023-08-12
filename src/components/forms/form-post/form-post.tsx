@@ -19,31 +19,44 @@ import Link from 'next/link';
 import { paths } from '~/constants/paths';
 import { useLocalStorage } from 'react-use';
 import { localStorageKeys } from '~/constants/local-storage';
+import { trpc } from '~/services/trpc';
+import { useRouter } from 'next/navigation';
+import { tryCatch } from '~/helpers/try-catch';
+import { useToast } from '~/components/toast';
+import { parseISO } from 'date-fns';
+import Spinner from '~/components/spinner';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
 const FormPost: FC = () => {
+  const router = useRouter();
   const { isSignedIn } = useAuth();
-  const [localStorageValues] = useLocalStorage<typeof initialValues>(
-    localStorageKeys.formPost
-  );
+  const { addToast } = useToast();
+  const { mutateAsync: createPost } = trpc.post.create.useMutation();
+  const [localStorageValues, setLocalStorageValues] = useLocalStorage<
+    typeof initialValues
+  >(localStorageKeys.formPost);
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const items = [
+  const getNavbarItems = (isSubmitting: boolean) => [
     {
       name: 'Settings',
-      icon: Cog8ToothIcon,
+      icon: <Cog8ToothIcon className="h-6" />,
       action: () => setIsSettingsOpen(true),
     },
     {
       name: 'Preview',
-      icon: EyeIcon,
+      icon: <EyeIcon className="h-6" />,
       action: () => setIsPostPreviewOpen(true),
     },
     {
       name: 'Publish',
-      icon: RocketLaunchIcon,
+      icon: isSubmitting ? (
+        <Spinner size="sm" color="inherit" />
+      ) : (
+        <RocketLaunchIcon className="h-6" />
+      ),
       buttonType: 'submit' as const,
     },
   ];
@@ -57,8 +70,31 @@ const FormPost: FC = () => {
     publishedAt: new Date(),
   };
 
-  const handleSubmit = (values: typeof initialValues) => {
-    console.log(values);
+  const handleSubmit = async (values: typeof initialValues) => {
+    if (!isSignedIn) {
+      router.push(paths.signIn);
+      return;
+    }
+
+    const { publishedAt } = values;
+    const [, error] = await tryCatch(
+      createPost({
+        ...values,
+        publishedAt:
+          typeof publishedAt === 'string' ? parseISO(publishedAt) : publishedAt,
+      })
+    );
+
+    if (error) {
+      addToast({
+        type: 'error',
+        content: 'Failed to publish blog post, try again in 5 seconds',
+      });
+      return;
+    }
+
+    setLocalStorageValues(initialValues);
+    router.push(paths.posts);
   };
 
   return (
@@ -66,59 +102,61 @@ const FormPost: FC = () => {
       initialValues={localStorageValues ?? initialValues}
       onSubmit={handleSubmit}
     >
-      <Form>
-        <SaveFormToLocalStorage />
-        <Modal
-          className="w-full max-w-md"
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-        >
-          <PostSettings />
-        </Modal>
-        <Modal
-          isOpen={isPostPreviewOpen}
-          onClose={() => setIsPostPreviewOpen(false)}
-          fakePage
-        >
-          <PostPreview handleClose={() => setIsPostPreviewOpen(false)} />
-        </Modal>
+      {({ isSubmitting }) => (
+        <Form>
+          <SaveFormToLocalStorage />
+          <Modal
+            className="w-full max-w-md"
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+          >
+            <PostSettings />
+          </Modal>
+          <Modal
+            isOpen={isPostPreviewOpen}
+            onClose={() => setIsPostPreviewOpen(false)}
+            fakePage
+          >
+            <PostPreview handleClose={() => setIsPostPreviewOpen(false)} />
+          </Modal>
 
-        <Navbar
-          items={items}
-          onRight={
-            isSignedIn ? (
-              <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
+          <Navbar
+            items={getNavbarItems(isSubmitting)}
+            onRight={
+              isSignedIn ? (
+                <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
+                  <Link
+                    href={paths.posts}
+                    className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
+                  >
+                    <HomeIcon className="h-6 lg:hidden" />
+                    Dashboard
+                  </Link>
+
+                  <UserButton />
+                </div>
+              ) : (
                 <Link
-                  href={paths.posts}
-                  className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                  href={{
+                    pathname: paths.signIn,
+                    query: {
+                      afterSignUpUrl: paths.newPost,
+                      afterSignInUrl: paths.newPost,
+                    },
+                  }}
                 >
-                  <HomeIcon className="h-6 lg:hidden" />
-                  Dashboard
+                  Log in <span aria-hidden="true">&rarr;</span>
                 </Link>
-
-                <UserButton />
-              </div>
-            ) : (
-              <Link
-                className="text-sm font-semibold leading-6 text-gray-900"
-                href={{
-                  pathname: paths.signIn,
-                  query: {
-                    afterSignUpUrl: paths.newPost,
-                    afterSignInUrl: paths.newPost,
-                  },
-                }}
-              >
-                Log in <span aria-hidden="true">&rarr;</span>
-              </Link>
-            )
-          }
-        />
-        <Container className="prose pt-8" smallerContainer>
-          <Title />
-          <Editor />
-        </Container>
-      </Form>
+              )
+            }
+          />
+          <Container className="prose pt-8" smallerContainer>
+            <Title />
+            <Editor />
+          </Container>
+        </Form>
+      )}
     </Formik>
   );
 };
