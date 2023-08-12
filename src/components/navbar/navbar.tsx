@@ -4,12 +4,11 @@ import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import ButtonOrLink from './button-or-link';
 import Logo from '../logo';
-import { type IconType } from '~/types/core';
 
 export type Item = {
   name: string;
   href?: string;
-  icon?: IconType;
+  icon?: JSX.Element;
   action?: () => void;
   buttonType?: 'submit' | 'button';
 };

@@ -15,12 +15,12 @@ const ButtonOrLink: FC<Props> = ({
 }) =>
   !!href ? (
     <a href={href} className={className}>
-      {!!Icon && <Icon className="h-6" />}
+      {!!Icon && Icon}
       <span>{name}</span>
     </a>
   ) : (
     <button className={className} onClick={action} type={buttonType}>
-      {!!Icon && <Icon className="h-6" />}
+      {!!Icon && Icon}
       <span>{name}</span>
     </button>
   );
