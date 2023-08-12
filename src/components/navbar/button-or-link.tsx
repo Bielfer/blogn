@@ -11,7 +11,7 @@ const ButtonOrLink: FC<Props> = ({
   name,
   action,
   className,
-  buttonType,
+  buttonType = 'button',
 }) =>
   !!href ? (
     <a href={href} className={className}>
