@@ -2,6 +2,7 @@
 import {
   Cog8ToothIcon,
   EyeIcon,
+  HomeIcon,
   RocketLaunchIcon,
 } from '@heroicons/react/24/outline';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -86,7 +87,17 @@ const FormPost: FC = () => {
           items={items}
           onRight={
             isSignedIn ? (
-              <UserButton />
+              <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
+                <Link
+                  href={paths.posts}
+                  className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
+                >
+                  <HomeIcon className="h-6 lg:hidden" />
+                  Dashboard
+                </Link>
+
+                <UserButton />
+              </div>
             ) : (
               <Link
                 className="text-sm font-semibold leading-6 text-gray-900"
