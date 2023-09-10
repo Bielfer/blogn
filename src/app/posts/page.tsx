@@ -1,10 +1,10 @@
-import { PlusIcon } from '@heroicons/react/20/solid';
 import { type Metadata } from 'next';
 import { type FC } from 'react';
 import MyLink from '~/components/my-link';
 import DashboardNavbar from '~/components/dashboard-navbar';
 import BasicTemplate from '~/components/templates/basic';
 import { dashboardPaths, paths } from '~/lib/constants/paths';
+import { HiMiniPlus } from 'react-icons/hi2';
 
 export const metadata: Metadata = {
   title: 'Your Posts | Blogn',
@@ -89,7 +89,7 @@ const Posts: FC = () => {
         <h1>Posts</h1>
         <MyLink
           href={paths.newPost}
-          iconRight={PlusIcon}
+          iconRight={HiMiniPlus}
           variant="button-primary"
         >
           New Post

@@ -1,10 +1,4 @@
 'use client';
-import {
-  Cog8ToothIcon,
-  EyeIcon,
-  HomeIcon,
-  RocketLaunchIcon,
-} from '@heroicons/react/24/outline';
 import { Form, Formik, useFormikContext } from 'formik';
 import dynamic from 'next/dynamic';
 import { type FC, useState, useEffect } from 'react';
@@ -14,7 +8,6 @@ import Navbar from '~/components/navbar';
 import PostPreview from './post-preview';
 import PostSettings from './post-settings';
 import Title from './title';
-import { UserButton, useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
 import { paths } from '~/lib/constants/paths';
 import { useLocalStorage } from 'react-use';
@@ -22,15 +15,21 @@ import { localStorageKeys } from '~/lib/constants/local-storage';
 import { trpc } from '~/lib/trpc';
 import { useRouter } from 'next/navigation';
 import { tryCatch } from '~/lib/helpers/try-catch';
-import { useToast } from '~/components/toast';
+
 import { parseISO } from 'date-fns';
 import Spinner from '~/components/spinner';
+import {
+  HiOutlineCog8Tooth,
+  HiOutlineEye,
+  HiOutlineHome,
+  HiOutlineRocketLaunch,
+} from 'react-icons/hi2';
+import { useToast } from '~/store';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
 const FormPost: FC = () => {
   const router = useRouter();
-  const { isSignedIn } = useAuth();
   const { addToast } = useToast();
   const { mutateAsync: createPost } = trpc.post.create.useMutation();
   const [localStorageValues, setLocalStorageValues] = useLocalStorage<
@@ -38,16 +37,17 @@ const FormPost: FC = () => {
   >(localStorageKeys.formPost);
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const isSignedIn = true;
 
   const getNavbarItems = (isSubmitting: boolean) => [
     {
       name: 'Settings',
-      icon: <Cog8ToothIcon className="h-6" />,
+      icon: <HiOutlineCog8Tooth className="h-6" />,
       action: () => setIsSettingsOpen(true),
     },
     {
       name: 'Preview',
-      icon: <EyeIcon className="h-6" />,
+      icon: <HiOutlineEye className="h-6" />,
       action: () => setIsPostPreviewOpen(true),
     },
     {
@@ -55,7 +55,7 @@ const FormPost: FC = () => {
       icon: isSubmitting ? (
         <Spinner size="sm" color="inherit" />
       ) : (
-        <RocketLaunchIcon className="h-6" />
+        <HiOutlineRocketLaunch className="h-6" />
       ),
       buttonType: 'submit' as const,
     },
@@ -129,11 +129,10 @@ const FormPost: FC = () => {
                     href={paths.posts}
                     className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
                   >
-                    <HomeIcon className="h-6 lg:hidden" />
+                    <HiOutlineHome className="h-6 lg:hidden" />
                     Dashboard
                   </Link>
-
-                  <UserButton />
+                  User Button
                 </div>
               ) : (
                 <Link

@@ -4,9 +4,8 @@ import type { FC } from 'react';
 import editorJsHtml from 'editorjs-html';
 import Container from '~/components/container';
 import Button from '~/components/button';
-import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
 import EmptyState from '~/components/empty-state';
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { HiMiniArrowUturnLeft, HiOutlinePencilSquare } from 'react-icons/hi2';
 
 const toHtml = editorJsHtml();
 
@@ -26,7 +25,7 @@ const PostPreview: FC<Props> = ({ handleClose }) => {
   return (
     <>
       <Container className="flex justify-end">
-        <Button onClick={handleClose} iconLeft={ArrowUturnLeftIcon}>
+        <Button onClick={handleClose} iconLeft={HiMiniArrowUturnLeft}>
           Go Back
         </Button>
       </Container>
@@ -45,7 +44,7 @@ const PostPreview: FC<Props> = ({ handleClose }) => {
           </div>
         ) : (
           <EmptyState
-            icon={PencilSquareIcon}
+            icon={HiOutlinePencilSquare}
             title="No content was created yet"
             subtitle="You can start your post by going back and pressing TAB"
           />

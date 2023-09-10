@@ -1,11 +1,6 @@
 import { dayAbbreviations, monthNames } from '~/lib/constants/dates';
 import { generateIntegerArray } from '~/lib/helpers/arrays';
 import { Listbox } from '@headlessui/react';
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import {
   addDays,
@@ -32,6 +27,11 @@ import {
   useState,
 } from 'react';
 import cn from '~/lib/helpers/cn';
+import {
+  HiMiniChevronDown,
+  HiMiniChevronLeft,
+  HiMiniChevronRight,
+} from 'react-icons/hi2';
 
 type Props = {
   date: Date;
@@ -105,7 +105,7 @@ const Calendar: FC<Props> = ({
             >
               <Listbox.Button className="flex items-center gap-x-1 text-left focus:outline-0 focus:ring-0">
                 {getYear(calendarDate)}
-                <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                <HiMiniChevronDown className="h-5 w-5" aria-hidden="true" />
               </Listbox.Button>
               <Listbox.Options className="scrollbar-hide absolute mt-1 max-h-60 w-full overflow-x-hidden overflow-y-scroll rounded-md bg-white py-1 shadow">
                 {availableYears.map((year) => (
@@ -127,7 +127,7 @@ const Calendar: FC<Props> = ({
           className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
         >
           <span className="sr-only">Mês Anterior</span>
-          <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+          <HiMiniChevronLeft className="h-5 w-5" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -135,7 +135,7 @@ const Calendar: FC<Props> = ({
           className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
         >
           <span className="sr-only">Próximo Mês</span>
-          <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+          <HiMiniChevronRight className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
       <div className="mt-10 grid grid-cols-7 text-center text-xs leading-6 text-gray-500">

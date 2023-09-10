@@ -1,5 +1,5 @@
-import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import { type ReactNode } from 'react';
+import { HiExclamationCircle } from 'react-icons/hi2';
 
 interface Props {
   label?: string | null;
@@ -36,7 +36,7 @@ const InputLayout = ({
 
       {!!error && (
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <ExclamationCircleIcon
+          <HiExclamationCircle
             className="h-5 w-5 text-red-500"
             aria-hidden="true"
           />

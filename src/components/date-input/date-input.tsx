@@ -1,10 +1,10 @@
-import { CalendarDaysIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { type Dispatch, type FC, type SetStateAction, useState } from 'react';
 import InputLayout from '~/components/input-layout';
 import Modal from '~/components/modal';
 import Calendar from './calendar';
+import { HiMiniCalendarDays } from 'react-icons/hi2';
 
 type Props = {
   date: Date;
@@ -52,7 +52,7 @@ const DateInput: FC<Props> = ({
         >
           <span className="block truncate">{format(date, 'dd/MM/yyyy')}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <CalendarDaysIcon
+            <HiMiniCalendarDays
               className="h-5 w-5 text-gray-400"
               aria-hidden="true"
             />

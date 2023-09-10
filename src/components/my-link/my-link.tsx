@@ -1,15 +1,21 @@
 import type { FC, ReactNode } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { type IconType } from '~/types/core';
+import { type Concat } from '~/types/core';
 import { type Url } from 'url';
-import { buttonSizes } from '../button';
 import Spinner from '../spinner';
+import {
+  buttonAndLinkSizes,
+  buttonAndLinkStyles,
+} from '~/lib/constants/styles';
+import { type IconType } from 'react-icons';
 
 export type MyLinkProps = {
   className?: string;
-  variant?: keyof typeof variantStyles;
-  size?: keyof typeof buttonSizes;
+  variant?:
+    | Concat<['button-', keyof (typeof buttonAndLinkStyles)['button' | 'link']]>
+    | keyof (typeof buttonAndLinkStyles)['button' | 'link'];
+  size?: keyof typeof buttonAndLinkSizes;
   iconLeft?: IconType;
   iconRight?: IconType;
   href: string | Partial<Url>;
@@ -19,27 +25,10 @@ export type MyLinkProps = {
   disabled?: boolean;
 };
 
-export const variantStyles = {
-  white: '',
-  primary:
-    'rounded-lg text-primary-700 hover:bg-primary-100 hover:text-primary-900',
-  secondary:
-    'rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900',
-  error: 'rounded-lg text-red-700 hover:bg-red-100 hover:text-red-900',
-  'button-primary':
-    'border border-transparent text-white bg-primary-900 hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-700',
-  'button-secondary':
-    'border border-transparent text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-  'button-white':
-    'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-  'button-danger':
-    'border border-transparent text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500',
-};
-
 const MyLink: FC<MyLinkProps> = ({
   className,
   children,
-  variant = 'white',
+  variant = 'default',
   href,
   size = 'md',
   iconLeft: IconLeft,
@@ -48,7 +37,9 @@ const MyLink: FC<MyLinkProps> = ({
   disabled,
   ...props
 }) => {
-  const linkStyles = !variant.includes('button') ? '' : 'rounded-lg shadow-sm';
+  const isButton = variant.includes('button');
+  const linkStyles = !isButton ? '' : 'rounded-lg shadow-sm';
+  const [buttonOrLink, variantStyle] = variant.split('-');
 
   return (
     <Link
@@ -57,8 +48,12 @@ const MyLink: FC<MyLinkProps> = ({
       className={clsx(
         'inline-flex items-center whitespace-nowrap font-medium transition duration-200',
         linkStyles,
-        variantStyles[variant],
-        buttonSizes[size],
+        buttonAndLinkStyles[isButton ? 'button' : 'link'][
+          (variantStyle ?? buttonOrLink) as keyof (typeof buttonAndLinkStyles)[
+            | 'button'
+            | 'link']
+        ],
+        buttonAndLinkSizes[size],
         disabled && 'pointer-events-none',
         className
       )}

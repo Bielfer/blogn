@@ -1,6 +1,6 @@
-import { type IconType } from '~/types/core';
 import clsx from 'clsx';
 import type { FC, ReactElement } from 'react';
+import { type IconType } from 'react-icons';
 
 type Props = {
   icon?: IconType;

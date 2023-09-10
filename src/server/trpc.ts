@@ -1,6 +1,6 @@
-import { TRPCError, initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-import { type Context } from './context';
+import { TRPCError, initTRPC } from "@trpc/server";
+import superjson from "superjson";
+import { type Context } from "./context";
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -13,20 +13,20 @@ const logger = middleware(async ({ path, type, next }) => {
   const result = await next();
   const durationMs = Date.now() - start;
 
-  if (result.ok) console.log('OK request timing:', { path, type, durationMs });
-  else console.error('Error request timing', { path, type, durationMs });
+  if (result.ok) console.log("OK request timing:", { path, type, durationMs });
+  else console.error("Error request timing", { path, type, durationMs });
 
   return result;
 });
 
 const isAuthenticated = middleware(({ ctx, next }) => {
-  if (!ctx.auth.userId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  if (!ctx.idToken) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
-      auth: ctx.auth,
+      idToken: ctx.idToken,
     },
   });
 });

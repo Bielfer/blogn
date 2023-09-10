@@ -2,14 +2,28 @@ import clsx from 'clsx';
 import { type FC } from 'react';
 
 type Post = {
-id:number
-date:Date
-}
+  id: number;
+  date: string;
+  datetime: string;
+  href: string;
+  title: string;
+  description: string;
+  author: {
+    href: string;
+    imageUrl: string;
+    name: string;
+    role: string;
+  };
+  category: {
+    href: string;
+    title: string;
+  };
+};
 
 type Props = {
   columns?: keyof typeof columnsStyles;
   className?: string;
-  posts:Post[]
+  posts: Post[];
 };
 
 const columnsStyles = {
@@ -18,7 +32,7 @@ const columnsStyles = {
   3: 'gap-x-8 sm:grid-cols-2 lg:grid-cols-3',
 };
 
-const BasicTemplate: FC<Props> = ({ columns = 1, className,posts }) => {
+const BasicTemplate: FC<Props> = ({ columns = 1, className, posts }) => {
   return (
     <div
       className={clsx(

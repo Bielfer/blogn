@@ -1,7 +1,14 @@
+/* eslint @typescript-eslint/no-redundant-type-constituents:off */
 import type { FC, ReactNode } from 'react';
 import Spinner from '~/components/spinner';
-import clsx from 'clsx';
-import { type IconType } from '~/types/core';
+import { type Concat } from '~/types/core';
+
+import { type IconType } from 'react-icons';
+import {
+  buttonAndLinkSizes,
+  buttonAndLinkStyles,
+} from '~/lib/constants/styles';
+import cn from '~/lib/helpers/cn';
 
 export type ButtonProps = {
   className?: string;
@@ -9,34 +16,13 @@ export type ButtonProps = {
   type?: 'submit' | 'button';
   iconLeft?: IconType;
   iconRight?: IconType;
-  variant?: keyof typeof variantStyles;
-  size?: keyof typeof buttonSizes;
+  variant?:
+    | Concat<['link-', keyof (typeof buttonAndLinkStyles)['button' | 'link']]>
+    | keyof (typeof buttonAndLinkStyles)['button' | 'link'];
+  size?: keyof typeof buttonAndLinkSizes;
   loading?: boolean;
   onClick?: () => void;
   disabled?: boolean;
-};
-
-export const variantStyles = {
-  primary:
-    'border border-transparent text-white bg-primary-900 hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-700',
-  secondary:
-    'border border-transparent text-primary-700 bg-primary-100 hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-  white:
-    'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500',
-  danger:
-    'border border-transparent text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500',
-  'link-primary':
-    'text-primary-700 hover:bg-primary-100 hover:text-primary-900',
-  'link-secondary': 'text-slate-700 hover:bg-slate-100 hover:text-slate-900',
-  'link-danger': 'text-red-700 hover:bg-red-100 hover:text-red-900',
-};
-
-export const buttonSizes = {
-  xs: 'px-2.5 py-1.5 text-xs',
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-4 py-2 text-base',
-  xl: 'px-6 py-3 text-base',
 };
 
 const Button: FC<ButtonProps> = ({
@@ -45,7 +31,7 @@ const Button: FC<ButtonProps> = ({
   iconLeft: IconLeft,
   iconRight: IconRight,
   children,
-  variant = 'white',
+  variant = 'default',
   size = 'md',
   loading,
   disabled,
@@ -53,18 +39,26 @@ const Button: FC<ButtonProps> = ({
 }) => {
   const isButton = !variant.includes('link');
   const buttonStyles = isButton ? 'shadow-sm' : '';
+  const [buttonOrLink, variantStyle] = variant.split('-');
 
   return (
     <button
       type={type === 'submit' ? 'submit' : 'button'}
-      className={clsx(
+      className={cn(
         'inline-flex items-center whitespace-nowrap rounded-lg font-medium transition duration-200',
         buttonStyles,
-        variantStyles[variant],
-        buttonSizes[size],
+        disabled
+          ? buttonAndLinkStyles.button.disabled
+          : buttonAndLinkStyles[isButton ? 'button' : 'link'][
+              (variantStyle ??
+                buttonOrLink) as keyof (typeof buttonAndLinkStyles)[
+                | 'button'
+                | 'link']
+            ],
+        buttonAndLinkSizes[size],
         className
       )}
-      disabled={loading ?? disabled}
+      disabled={loading ? loading : disabled}
       {...props}
     >
       {loading ? (

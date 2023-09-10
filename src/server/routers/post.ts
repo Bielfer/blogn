@@ -1,7 +1,6 @@
 import { router, privateProcedure } from '~/server/trpc';
 import { z } from 'zod';
 import { tryCatch } from '~/lib/helpers/try-catch';
-import { prisma } from '~/prisma/client';
 import { TRPCError } from '@trpc/server';
 
 export const postRouter = router({
@@ -20,18 +19,8 @@ export const postRouter = router({
         publishedAt: z.date(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      const { userId } = ctx.auth;
-
-      const [post, error] = await tryCatch(
-        prisma.post.create({
-          data: { ...input, userId },
-        })
-      );
-
-      if (error) throw new TRPCError({ code: 'BAD_REQUEST' });
-
-      return post;
+    .mutation(({ input, ctx }) => {
+      return 'temp';
     }),
 });
 

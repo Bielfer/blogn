@@ -8,7 +8,7 @@ const ToastContainer: FC = () => {
 
   return (
     <Transition appear show={toasts.length > 0}>
-      <div className="absolute bottom-5 right-5 flex w-5/6 max-w-sm flex-col gap-y-3 overflow-hidden">
+      <div className="fixed right-5 top-5 flex w-5/6 max-w-sm flex-col gap-y-3 overflow-hidden">
         {toasts.map((item) => (
           <Toast key={item.id} {...item} />
         ))}

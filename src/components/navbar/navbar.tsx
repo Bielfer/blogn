@@ -1,9 +1,9 @@
 'use client';
 import { type FC, useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import ButtonOrLink from './button-or-link';
 import Logo from '../logo';
+import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
 
 export type Item = {
   name: string;
@@ -40,7 +40,7 @@ const Navbar: FC<Props> = ({ items, onRight }) => {
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            <HiOutlineBars3 className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <div className="hidden items-center lg:flex lg:gap-x-12">
@@ -73,7 +73,7 @@ const Navbar: FC<Props> = ({ items, onRight }) => {
               onClick={() => setMobileMenuOpen(false)}
             >
               <span className="sr-only">Close menu</span>
-              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+              <HiOutlineXMark className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
           <div className="mt-6 flow-root">

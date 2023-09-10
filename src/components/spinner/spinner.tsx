@@ -1,6 +1,7 @@
-import clsx from 'clsx';
 import type { FC } from 'react';
 import ConditionalWrapper from '../conditional-wrapper';
+import './styles.css';
+import cn from '~/lib/helpers/cn';
 
 type Size = keyof typeof sizes;
 
@@ -33,7 +34,7 @@ const Spinner: FC<Props> = ({
   page,
 }) => (
   <ConditionalWrapper
-    condition={page || false}
+    condition={page ?? false}
     renderWrapper={(children) => (
       <div className="flex h-screen w-screen items-center justify-center">
         {children}
@@ -41,23 +42,52 @@ const Spinner: FC<Props> = ({
     )}
   >
     <svg
-      className={clsx('animate-spin ', sizes[size], colors[color], className)}
+      className={cn(sizes[size], colors[color], className)}
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
-      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
+      <g className="spinner_Wezc" fill="currentColor">
+        <circle cx="12" cy="2.5" r="1.5" stroke="currentColor" opacity=".14" />
+        <circle
+          cx="16.75"
+          cy="3.77"
+          r="1.5"
+          stroke="currentColor"
+          opacity=".29"
+          style={{ background: 'green' }}
+        />
+        <circle
+          cx="20.23"
+          cy="7.25"
+          r="1.5"
+          stroke="currentColor"
+          opacity=".43"
+        />
+        <circle
+          cx="21.50"
+          cy="12.00"
+          r="1.5"
+          stroke="currentColor"
+          opacity=".57"
+        />
+        <circle
+          cx="20.23"
+          cy="16.75"
+          r="1.5"
+          stroke="currentColor"
+          opacity=".71"
+        />
+        <circle
+          cx="16.75"
+          cy="20.23"
+          r="1.5"
+          stroke="currentColor"
+          opacity=".86"
+        />
+        <circle cx="12" cy="21.5" r="1.5" />
+      </g>
     </svg>
   </ConditionalWrapper>
 );
