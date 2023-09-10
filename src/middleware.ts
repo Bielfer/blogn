@@ -1,5 +1,5 @@
 import { authMiddleware } from '@clerk/nextjs';
-import { paths } from './constants/paths';
+import { paths } from './lib/constants/paths';
 
 export default authMiddleware({
   publicRoutes: ['/(api|trpc)(.*)', paths.home, paths.newPost],

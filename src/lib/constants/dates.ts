@@ -6,7 +6,7 @@ export const dayAbbreviations = [
   'THU',
   'FRI',
   'SAT',
-];
+] as const;
 
 export const monthNames = [
   'January',
@@ -21,4 +21,4 @@ export const monthNames = [
   'October',
   'November',
   'December',
-];
+] as const;

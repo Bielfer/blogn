@@ -1,5 +1,5 @@
 import MyLink from '~/components/my-link';
-import { paths } from '~/constants/paths';
+import { paths } from '~/lib/constants/paths';
 
 const Page404 = () => (
   <div className="flex h-screen flex-col bg-white pb-12 pt-16">

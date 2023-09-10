@@ -6,6 +6,6 @@ const paths = {
   signUp: '/sign-up',
 } as const;
 
-export const dashboardPaths = [{ name: 'Posts', href: paths.posts }];
+export const dashboardPaths = [{ name: 'Posts', href: paths.posts }] as const;
 
 export { paths };

@@ -1,6 +1,6 @@
 import { router, privateProcedure } from '~/server/trpc';
 import { z } from 'zod';
-import { tryCatch } from '~/helpers/try-catch';
+import { tryCatch } from '~/lib/helpers/try-catch';
 import { prisma } from '~/prisma/client';
 import { TRPCError } from '@trpc/server';
 

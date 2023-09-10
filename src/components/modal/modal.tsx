@@ -1,6 +1,6 @@
 import { type FC, Fragment, type ReactNode } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import cn from '~/helpers/cn';
+import cn from '~/lib/helpers/cn';
 
 interface Props {
   className?: string;

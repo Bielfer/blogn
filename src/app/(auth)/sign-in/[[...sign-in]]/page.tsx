@@ -1,7 +1,7 @@
 import { SignIn } from '@clerk/nextjs';
 import { type Metadata } from 'next';
 import { type FC } from 'react';
-import { paths } from '~/constants/paths';
+import { paths } from '~/lib/constants/paths';
 
 export const metadata: Metadata = {
   title: 'Sign In | Blogn',

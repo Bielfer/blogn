@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import ConditionalWrapper from '../conditional-wrapper';
-import cn from '~/helpers/cn';
+import cn from '~/lib/helpers/cn';
 
 type Props = {
   className?: string;

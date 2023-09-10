@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { type ChangeEvent, type FC } from 'react';
 import InputLayout from '../input-layout';
-import cn from '~/helpers/cn';
+import cn from '~/lib/helpers/cn';
 
 interface Props {
   label?: string | null;
