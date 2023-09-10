@@ -24,6 +24,7 @@ import {
   HiOutlineRocketLaunch,
 } from 'react-icons/hi2';
 import { useToast } from '~/store';
+import UserButton from '~/components/user-button';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
@@ -131,7 +132,7 @@ const FormPost: FC = () => {
                     <HiOutlineHome className="h-6 lg:hidden" />
                     Dashboard
                   </Link>
-                  User Button
+                  <UserButton />
                 </div>
               ) : (
                 <Link

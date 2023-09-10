@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import Logo from '../logo';
 import Container from '../container';
 import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
+import UserButton from '../user-button';
 
 export type Item = {
   name: string;
@@ -54,7 +55,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                   </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                  User Button
+                  <UserButton />
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
                   <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
@@ -98,7 +99,9 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                   );
                 })}
               </div>
-              <div className="border-t border-gray-200 p-4">User Button</div>
+              <div className="border-t border-gray-200 p-4">
+                <UserButton />
+              </div>
             </Disclosure.Panel>
           </>
         )}
