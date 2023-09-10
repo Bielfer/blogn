@@ -3,7 +3,7 @@ import { type FC } from 'react';
 import MyLink from '~/components/my-link';
 import DashboardNavbar from '~/components/dashboard-navbar';
 import BasicTemplate from '~/components/templates/basic';
-import { dashboardPaths, paths } from '~/lib/constants/paths';
+import { dashboardRoutes, routes } from '~/lib/constants/routes';
 import { HiMiniPlus } from 'react-icons/hi2';
 
 export const metadata: Metadata = {
@@ -84,11 +84,11 @@ const posts = [
 
 const Posts: FC = () => {
   return (
-    <DashboardNavbar items={dashboardPaths}>
+    <DashboardNavbar items={dashboardRoutes}>
       <header className="flex items-center justify-between">
         <h1>Posts</h1>
         <MyLink
-          href={paths.newPost}
+          href={routes.newPost}
           iconRight={HiMiniPlus}
           variant="button-primary"
         >
