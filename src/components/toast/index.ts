@@ -1,4 +1,4 @@
-import { useToastStore } from '~/app/store';
+import { useToast } from '~/store';
 import ToastContainer from './container';
 
-export { useToastStore as useToast, ToastContainer };
+export { useToast, ToastContainer };

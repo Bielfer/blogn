@@ -1,10 +1,10 @@
 import { Transition } from '@headlessui/react';
-import { useToastStore } from '~/app/store';
+import { useToast } from '~/store';
 import Toast from './toast';
 import { type FC } from 'react';
 
 const ToastContainer: FC = () => {
-  const { toasts } = useToastStore();
+  const { toasts } = useToast();
 
   return (
     <Transition appear show={toasts.length > 0}>

@@ -1,3 +1,3 @@
 import useToastStore from './toast';
 
-export { useToastStore };
+export { useToastStore as useToast };

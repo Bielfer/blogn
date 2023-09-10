@@ -9,8 +9,8 @@ import {
 } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { useTimeoutFn } from 'react-use';
-import { useToastStore } from '~/app/store';
-import { Toast } from '~/app/store/toast';
+import { useToast } from '~/store';
+import { Toast } from '~/store/toast';
 
 const types = {
   default: 'bg-blue-50 text-blue-700',
@@ -40,7 +40,7 @@ const icons = {
 
 const Toast = ({ content, duration = 3000, id, type = 'default' }: Toast) => {
   const [show, setShow] = useState(!!content);
-  const { removeToast } = useToastStore();
+  const { removeToast } = useToast();
 
   useTimeoutFn(() => {
     setShow(false);
