@@ -4,13 +4,13 @@ import FormSignIn from '~/components/forms/form-sign-in';
 import { routes } from '~/lib/constants/routes';
 
 export const metadata: Metadata = {
-  title: 'Faça seu cadastro',
+  title: 'Sign Up',
 };
 
 const SignInPage: FC = () => {
   return (
     <div className="flex h-screen items-center justify-center">
-      <FormSignIn title="Faça seu Cadastro" afterLoginUrl={routes.posts} />
+      <FormSignIn title="Sign Up" afterLoginUrl={routes.posts} />
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { dashboardRoutes, routes } from '~/lib/constants/routes';
 import { HiMiniPlus } from 'react-icons/hi2';
 
 export const metadata: Metadata = {
-  title: 'Your Posts | Blogn',
+  title: 'Your Posts',
   description: 'Create and edit your blog posts',
 };
 
