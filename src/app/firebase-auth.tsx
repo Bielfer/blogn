@@ -1,18 +1,14 @@
 'use client';
 import Cookies from 'js-cookie';
 import { onIdTokenChanged } from 'firebase/auth';
-import { type FC, type ReactNode } from 'react';
+import { type FC } from 'react';
 import { auth } from '~/services/firebase/client';
 
 import { useMount } from 'react-use';
 import { useUser } from '~/store';
 import { cookiesKeys } from '~/lib/constants/cookies';
 
-type Props = {
-  children: ReactNode;
-};
-
-const FirebaseAuth: FC<Props> = ({ children }) => {
+const FirebaseAuth: FC = () => {
   const { setUser } = useUser();
 
   useMount(() => {
@@ -31,7 +27,7 @@ const FirebaseAuth: FC<Props> = ({ children }) => {
     return () => unsubscribe();
   });
 
-  return children;
+  return null;
 };
 
 export default FirebaseAuth;
