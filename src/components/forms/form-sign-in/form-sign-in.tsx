@@ -55,7 +55,7 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
     if (error || !res?.user) {
       addToast({
         type: 'error',
-        content: 'Falha ao entrar com Google, tente novamente',
+        content: 'Failed to enter using Google, try again',
       });
       return;
     }
@@ -76,14 +76,14 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
     if (error) {
       addToast({
         type: 'error',
-        content: 'Falha ao enviar link para o email, tente novamente',
+        content: 'Failed to send magic link to your email, try again',
       });
       return;
     }
 
     addToast({
       type: 'success',
-      content: 'Acesse o seu email e clique no link que foi enviado',
+      content: 'Check your email to finish your login',
     });
     setEmailForSignIn(values.email);
   };
@@ -96,7 +96,7 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
       let email: string | null | undefined = emailForSignIn;
 
       if (!email) {
-        email = window.prompt('Confirme seu email, por segurança');
+        email = window.prompt('For your safety, confirm your email');
       }
 
       const [res, error] = await tryCatch(
@@ -106,7 +106,7 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
       if (error || !res?.user) {
         addToast({
           type: 'error',
-          content: 'Falha ao fazer login com email, tente novamente',
+          content: 'Failed to sign in with your email, try again',
         });
         return;
       }
@@ -133,7 +133,7 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
                 iconLeft={FcGoogle}
                 onClick={handleGoogle}
               >
-                Continue com Google
+                Continue with Google
               </Button>
             </div>
             <div className="flex items-center justify-between gap-x-4 pb-6">
@@ -142,14 +142,14 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
               <div className="flex-grow border-b"></div>
             </div>
             <FormikInput
-              label="Seu email"
+              label="Your email"
               name="email"
-              placeholder="Ex: meuemail@meuprovedor.com"
+              placeholder="Ex: email@provider.com"
             />
 
             <div className="flex justify-end pt-6">
               <Button type="submit" variant="primary" loading={isSubmitting}>
-                Enviar
+                Send
               </Button>
             </div>
           </Form>
