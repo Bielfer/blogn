@@ -9,7 +9,7 @@ import PostPreview from './post-preview';
 import PostSettings from './post-settings';
 import Title from './title';
 import Link from 'next/link';
-import { paths } from '~/lib/constants/paths';
+import { routes } from '~/lib/constants/routes';
 import { useLocalStorage } from 'react-use';
 import { localStorageKeys } from '~/lib/constants/local-storage';
 import { trpc } from '~/lib/trpc';
@@ -72,7 +72,7 @@ const FormPost: FC = () => {
 
   const handleSubmit = async (values: typeof initialValues) => {
     if (!isSignedIn) {
-      router.push(paths.signIn);
+      router.push(routes.signIn);
       return;
     }
 
@@ -94,7 +94,7 @@ const FormPost: FC = () => {
     }
 
     setLocalStorageValues(initialValues);
-    router.push(paths.posts);
+    router.push(routes.posts);
   };
 
   return (
@@ -126,7 +126,7 @@ const FormPost: FC = () => {
               isSignedIn ? (
                 <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
                   <Link
-                    href={paths.posts}
+                    href={routes.posts}
                     className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
                   >
                     <HiOutlineHome className="h-6 lg:hidden" />
@@ -138,10 +138,10 @@ const FormPost: FC = () => {
                 <Link
                   className="text-sm font-semibold leading-6 text-gray-900"
                   href={{
-                    pathname: paths.signIn,
+                    pathname: routes.signIn,
                     query: {
-                      afterSignUpUrl: paths.newPost,
-                      afterSignInUrl: paths.newPost,
+                      afterSignUpUrl: routes.newPost,
+                      afterSignInUrl: routes.newPost,
                     },
                   }}
                 >

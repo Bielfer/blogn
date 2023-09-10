@@ -1,4 +1,4 @@
-const paths = {
+export const routes = {
   home: '/',
   posts: '/posts',
   newPost: '/posts/new',
@@ -6,6 +6,4 @@ const paths = {
   signUp: '/sign-up',
 } as const;
 
-export const dashboardPaths = [{ name: 'Posts', href: paths.posts }] as const;
-
-export { paths };
+export const dashboardRoutes = [{ name: 'Posts', href: routes.posts }] as const;

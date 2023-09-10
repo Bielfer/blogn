@@ -1,5 +1,5 @@
 import MyLink from '~/components/my-link';
-import { paths } from '~/lib/constants/paths';
+import { routes } from '~/lib/constants/routes';
 
 const Page404 = () => (
   <div className="flex h-screen flex-col bg-white pb-12 pt-16">
@@ -18,7 +18,7 @@ const Page404 = () => (
           </p>
           <div className="mt-6">
             <MyLink
-              href={paths.home}
+              href={routes.home}
               className="text-base font-medium text-primary-600 hover:text-primary-500"
             >
               Home Page<span aria-hidden="true"> &rarr;</span>
