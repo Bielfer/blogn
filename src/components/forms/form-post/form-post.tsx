@@ -15,7 +15,6 @@ import { localStorageKeys } from '~/lib/constants/local-storage';
 import { trpc } from '~/lib/trpc';
 import { useRouter } from 'next/navigation';
 import { tryCatch } from '~/lib/helpers/try-catch';
-
 import { parseISO } from 'date-fns';
 import Spinner from '~/components/spinner';
 import {
@@ -42,12 +41,12 @@ const FormPost: FC = () => {
   const getNavbarItems = (isSubmitting: boolean) => [
     {
       name: 'Settings',
-      icon: <HiOutlineCog8Tooth className="h-6" />,
+      icon: <HiOutlineCog8Tooth className="h-5 w-5" />,
       action: () => setIsSettingsOpen(true),
     },
     {
       name: 'Preview',
-      icon: <HiOutlineEye className="h-6" />,
+      icon: <HiOutlineEye className="h-5 w-5" />,
       action: () => setIsPostPreviewOpen(true),
     },
     {
@@ -55,7 +54,7 @@ const FormPost: FC = () => {
       icon: isSubmitting ? (
         <Spinner size="sm" color="inherit" />
       ) : (
-        <HiOutlineRocketLaunch className="h-6" />
+        <HiOutlineRocketLaunch className="h-5 w-5" />
       ),
       buttonType: 'submit' as const,
     },
