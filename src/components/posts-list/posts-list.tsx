@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { type FC } from 'react';
+import { type Url } from 'url';
 import cn from '~/lib/helpers/cn';
 
 type Post = {
   id: string;
   date: string;
   datetime: string;
-  href: string;
+  href: Partial<Url> | string;
   title: string;
   description: string;
   author: {
