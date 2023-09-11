@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/ban-ts-comment:off */
 import {
   type CollectionReference,
   type DocumentData,
@@ -24,12 +25,25 @@ export const conditionalWheres = (
 export const formatDocument = <T>(
   snapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
 ) => {
-  return {
+  const formattedDocument = {
     ...snapshot.data(),
     id: snapshot.id,
     createdAt: snapshot.createTime?.toDate(),
     updatedAt: snapshot.updateTime?.toDate(),
   } as BaseDocument<T>;
+
+  for (const [key, value] of Object.entries(formattedDocument)) {
+    if (isTimestamp(value)) {
+      // @ts-ignore
+      formattedDocument[key as keyof typeof formattedDocument] = (
+        formattedDocument[
+          key as keyof typeof formattedDocument
+        ] as unknown as FirebaseFirestore.Timestamp
+      ).toDate();
+    }
+  }
+
+  return formattedDocument;
 };
 
 export const snapshotToArray = <T>(
@@ -41,3 +55,6 @@ export const snapshotToArray = <T>(
 
   return docs;
 };
+
+export const isTimestamp = (timestamp: any) =>
+  typeof timestamp === 'object' && timestamp.seconds && timestamp.nanoseconds;
