@@ -142,8 +142,8 @@ const FormPost: FC = () => {
                   href={{
                     pathname: routes.appSignIn,
                     query: {
-                      afterSignUpUrl: routes.appNewPost,
-                      afterSignInUrl: routes.appNewPost,
+                      afterSignUpUrl: routes.appPostEditor,
+                      afterSignInUrl: routes.appPostEditor,
                     },
                   }}
                 >

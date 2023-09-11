@@ -18,7 +18,7 @@ const PostListWrapper: FC = () => {
     posts?.map((post) => ({
       id: post.id,
       title: post.title,
-      href: { pathname: routes.appNewPost, query: { postId: post.id } },
+      href: { pathname: routes.appPostEditor, query: { postId: post.id } },
       description: post.SEODescription || 'No description provided',
       date: format(post.updatedAt, 'MMM d, yyyy'),
       datetime: format(post.updatedAt, 'yyyy-MM-dd'),
