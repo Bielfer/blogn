@@ -1,13 +1,15 @@
-import { initializeApp, cert, getApps } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import { getAuth } from "firebase-admin/auth";
-import { env } from "~/env.mjs";
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
+import { env } from '~/env.mjs';
 
-if (getApps().length === 0)
-  initializeApp({
-    credential: cert(JSON.parse(env.FIREBASE_SERVICE_ACCOUNT)),
-  });
+const app =
+  getApps().length === 0
+    ? initializeApp({
+        credential: cert(JSON.parse(env.FIREBASE_SERVICE_ACCOUNT)),
+      })
+    : getApps()[0]!;
 
-export const db = getFirestore();
+export const db = getFirestore(app);
 
-export const auth = getAuth();
+export const auth = getAuth(app);
