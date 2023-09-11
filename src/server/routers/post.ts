@@ -14,7 +14,7 @@ const postSchema = z.object({
   id: z.string(),
   content: z.object({
     version: z.string().optional(),
-    blocks: z.object({}).array(),
+    blocks: z.any().array(),
     time: z.number().optional(),
   }),
   title: z.string(),
@@ -36,6 +36,24 @@ const updatePostSchema = postSchema.omit({ createdAt: true, updatedAt: true });
 type Post = z.infer<typeof postSchema>;
 
 export const postRouter = router({
+  get: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { id } = input;
+
+      const [postSnapshot, error] = await tryCatch(
+        db.collection(collections.posts).doc(id).get()
+      );
+
+      if (error || !postSnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      return formatDocument<Post>(postSnapshot);
+    }),
   getMany: privateProcedure
     .input(
       z.object({
