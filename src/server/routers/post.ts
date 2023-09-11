@@ -82,6 +82,43 @@ export const postRouter = router({
 
       return formatDocument<Post>(postSnapshot);
     }),
+  update: privateProcedure
+    .input(updatePostSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { uid } = ctx.decodedIdToken;
+      const { id, ...filteredInput } = input;
+
+      const postRef = db.collection(collections.posts).doc(id);
+
+      const [, error] = await tryCatch(
+        postRef.update({
+          ...filteredInput,
+          uid,
+        })
+      );
+
+      if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      const [postSnapshot, errorGettingPost] = await tryCatch(postRef.get());
+
+      if (!postSnapshot || errorGettingPost)
+        throw new TRPCError({ code: 'BAD_REQUEST', message: errorGettingPost });
+
+      return formatDocument<Post>(postSnapshot);
+    }),
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      const { id } = input;
+
+      const [, error] = await tryCatch(
+        db.collection(collections.posts).doc(id).delete()
+      );
+
+      if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      return `Post ${id} deleted`;
+    }),
 });
 
 export type PostRouter = typeof postRouter;
