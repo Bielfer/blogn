@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { type z } from 'zod';
 
 export const zodValidator =
   <T extends z.ZodTypeAny>(schema: T) =>
@@ -22,13 +22,3 @@ export const zodValidator =
 
     return errors;
   };
-
-export const createSchema = <T extends z.ZodObject<any>>(schema: T) => {
-  return schema.omit({ id: true, createdAt: true, updatedAt: true }) as T;
-};
-
-export const updateSchema = <T extends z.ZodObject<any>>(schema: T) => {
-  return schema
-    .omit({ createdAt: true, updatedAt: true })
-    .extend({ id: z.string() }) as T;
-};

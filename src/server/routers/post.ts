@@ -9,7 +9,6 @@ import {
   formatDocument,
   snapshotToArray,
 } from '~/lib/helpers/firebase';
-import { createSchema, updateSchema } from '~/lib/helpers/zod';
 
 const postSchema = z.object({
   id: z.string(),
@@ -27,8 +26,14 @@ const postSchema = z.object({
   updatedAt: z.date(),
 });
 
-const createPostSchema = createSchema(postSchema);
-const updatePostSchema = updateSchema(postSchema);
+const createPostSchema = postSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+const updatePostSchema = postSchema.omit({ createdAt: true, updatedAt: true });
+
+type Post = z.infer<typeof postSchema>;
 
 export const postRouter = router({
   getMany: privateProcedure
@@ -51,7 +56,7 @@ export const postRouter = router({
       if (error || !postsSnapshot)
         throw new TRPCError({ code: 'BAD_REQUEST', message: error });
 
-      const posts = snapshotToArray<z.infer<typeof postSchema>>(postsSnapshot);
+      const posts = snapshotToArray<Post>(postsSnapshot);
 
       return posts;
     }),
@@ -75,7 +80,7 @@ export const postRouter = router({
       if (!postSnapshot || errorGettingPost)
         throw new TRPCError({ code: 'BAD_REQUEST', message: errorGettingPost });
 
-      return formatDocument<z.infer<typeof postSchema>>(postSnapshot);
+      return formatDocument<Post>(postSnapshot);
     }),
 });
 
