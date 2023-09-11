@@ -23,7 +23,7 @@ import {
   HiOutlineHome,
   HiOutlineRocketLaunch,
 } from 'react-icons/hi2';
-import { useToast } from '~/store';
+import { useToast, useUser } from '~/store';
 import UserButton from '~/components/user-button';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
@@ -37,7 +37,8 @@ const FormPost: FC = () => {
   >(localStorageKeys.formPost);
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const isSignedIn = true;
+  const { status } = useUser();
+  const isSignedIn = status === 'authenticated';
 
   const getNavbarItems = (isSubmitting: boolean) => [
     {
@@ -116,6 +117,7 @@ const FormPost: FC = () => {
             isOpen={isPostPreviewOpen}
             onClose={() => setIsPostPreviewOpen(false)}
             fakePage
+            className="overflow-auto"
           >
             <PostPreview handleClose={() => setIsPostPreviewOpen(false)} />
           </Modal>
@@ -129,7 +131,7 @@ const FormPost: FC = () => {
                     href={routes.posts}
                     className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
                   >
-                    <HiOutlineHome className="h-6 lg:hidden" />
+                    <HiOutlineHome className="h-6" />
                     Dashboard
                   </Link>
                   <UserButton />
@@ -150,7 +152,7 @@ const FormPost: FC = () => {
               )
             }
           />
-          <Container className="prose pt-8" smallerContainer>
+          <Container className="prose pb-32 pt-8" smallerContainer>
             <Title />
             <Editor />
           </Container>
