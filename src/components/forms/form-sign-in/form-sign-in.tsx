@@ -22,7 +22,7 @@ import { tryCatch } from '~/lib/helpers/try-catch';
 import { localStorageKeys } from '~/lib/constants/local-storage';
 import { validations } from '~/lib/constants/validations';
 import { routes } from '~/lib/constants/routes';
-import { zodValidator } from '~/lib/helpers/zod-validator';
+import { zodValidator } from '~/lib/helpers/zod';
 
 type Props = {
   title: string;
