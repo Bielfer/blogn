@@ -1,6 +1,8 @@
-import { TRPCError, initTRPC } from "@trpc/server";
-import superjson from "superjson";
-import { type Context } from "./context";
+import { TRPCError, initTRPC } from '@trpc/server';
+import superjson from 'superjson';
+import { type Context } from './context';
+import { auth } from '~/services/firebase/admin';
+import { tryCatch } from '~/lib/helpers/try-catch';
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -13,20 +15,27 @@ const logger = middleware(async ({ path, type, next }) => {
   const result = await next();
   const durationMs = Date.now() - start;
 
-  if (result.ok) console.log("OK request timing:", { path, type, durationMs });
-  else console.error("Error request timing", { path, type, durationMs });
+  if (result.ok) console.log('OK request timing:', { path, type, durationMs });
+  else console.error('Error request timing', { path, type, durationMs });
 
   return result;
 });
 
-const isAuthenticated = middleware(({ ctx, next }) => {
+const isAuthenticated = middleware(async ({ ctx, next }) => {
   if (!ctx.idToken) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No token provided' });
   }
+  const [decodedIdToken, error] = await tryCatch(
+    auth.verifyIdToken(ctx.idToken)
+  );
+
+  if (error || !decodedIdToken)
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid token' });
 
   return next({
     ctx: {
       idToken: ctx.idToken,
+      decodedIdToken,
     },
   });
 });
