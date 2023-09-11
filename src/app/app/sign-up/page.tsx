@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const SignInPage: FC = () => {
   return (
     <div className="flex h-screen items-center justify-center">
-      <FormSignIn title="Sign Up" afterLoginUrl={routes.posts} />
+      <FormSignIn title="Sign Up" afterLoginUrl={routes.appPosts} />
     </div>
   );
 };

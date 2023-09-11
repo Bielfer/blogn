@@ -17,7 +17,7 @@ const Posts: FC = () => {
       <header className="flex items-center justify-between">
         <h1>Posts</h1>
         <MyLink
-          href={routes.newPost}
+          href={routes.appNewPost}
           iconRight={HiMiniPlus}
           variant="button-primary"
         >

@@ -65,7 +65,7 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
 
   const handleSubmit = async (values: z.infer<typeof validationSchema>) => {
     const actionCodeSettings = {
-      url: `${env.NEXT_PUBLIC_APP_URL}${routes.signIn}`,
+      url: `${env.NEXT_PUBLIC_APP_URL}${routes.appSignIn}`,
       handleCodeInApp: true,
     };
 

@@ -73,7 +73,7 @@ const FormPost: FC = () => {
 
   const handleSubmit = async (values: typeof initialValues) => {
     if (!isSignedIn) {
-      router.push(routes.signIn);
+      router.push(routes.appSignIn);
       return;
     }
 
@@ -95,7 +95,7 @@ const FormPost: FC = () => {
     }
 
     setLocalStorageValues(initialValues);
-    router.push(routes.posts);
+    router.push(routes.appPosts);
   };
 
   return (
@@ -128,7 +128,7 @@ const FormPost: FC = () => {
               isSignedIn ? (
                 <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
                   <Link
-                    href={routes.posts}
+                    href={routes.appPosts}
                     className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
                   >
                     <HiOutlineHome className="h-6" />
@@ -140,10 +140,10 @@ const FormPost: FC = () => {
                 <Link
                   className="text-sm font-semibold leading-6 text-gray-900"
                   href={{
-                    pathname: routes.signIn,
+                    pathname: routes.appSignIn,
                     query: {
-                      afterSignUpUrl: routes.newPost,
-                      afterSignInUrl: routes.newPost,
+                      afterSignUpUrl: routes.appNewPost,
+                      afterSignInUrl: routes.appNewPost,
                     },
                   }}
                 >

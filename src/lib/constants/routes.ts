@@ -1,9 +1,11 @@
 export const routes = {
-  home: '/',
-  posts: '/posts',
-  newPost: '/posts/new',
-  signIn: '/sign-in',
-  signUp: '/sign-up',
+  appHome: '/',
+  appPosts: '/posts',
+  appNewPost: '/posts/new',
+  appSignIn: '/sign-in',
+  appSignUp: '/sign-up',
 } as const;
 
-export const dashboardRoutes = [{ name: 'Posts', href: routes.posts }] as const;
+export const dashboardRoutes = [
+  { name: 'Posts', href: routes.appPosts },
+] as const;

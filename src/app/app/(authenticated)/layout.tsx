@@ -14,7 +14,7 @@ const AuthenticatedLayout: FC<Props> = ({ children }) => {
 
   if (status === 'loading') return <Spinner page size="lg" />;
 
-  if (status === 'unauthenticated') redirect(routes.signIn);
+  if (status === 'unauthenticated') redirect(routes.appSignIn);
 
   return children;
 };

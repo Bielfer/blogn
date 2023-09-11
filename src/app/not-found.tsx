@@ -18,7 +18,7 @@ const Page404 = () => (
           </p>
           <div className="mt-6">
             <MyLink
-              href={routes.home}
+              href={routes.appHome}
               className="text-base font-medium text-primary-600 hover:text-primary-500"
             >
               Home Page<span aria-hidden="true"> &rarr;</span>
