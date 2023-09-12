@@ -1,6 +1,8 @@
 'use client';
 import { format } from 'date-fns';
 import type { FC } from 'react';
+import { HiOutlinePencilSquare } from 'react-icons/hi2';
+import EmptyState from '~/components/empty-state';
 import LoadingWrapper from '~/components/loading-wrapper';
 import PostsList from '~/components/posts-list';
 import { publicImagesHref } from '~/lib/constants/public';
@@ -32,9 +34,20 @@ const PostListWrapper: FC = () => {
     })) ?? [];
 
   return (
-    <LoadingWrapper isLoading={isLoading}>
-      <PostsList posts={formattedPosts} columns={3} className="pb-32" />
-    </LoadingWrapper>
+    <div className="py-10 sm:py-16">
+      <LoadingWrapper isLoading={isLoading}>
+        {!!posts && posts.length > 0 ? (
+          <PostsList posts={formattedPosts} columns={3} />
+        ) : (
+          <EmptyState
+            className="mx-auto max-w-md"
+            title="No posts created"
+            subtitle="To create a new post you just have to click on the new post button"
+            icon={HiOutlinePencilSquare}
+          />
+        )}
+      </LoadingWrapper>
+    </div>
   );
 };
 
