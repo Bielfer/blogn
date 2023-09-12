@@ -2,7 +2,6 @@
 import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineCog8Tooth,
-  HiUserCircle,
 } from 'react-icons/hi2';
 import { useUser } from '~/store';
 import { Popover } from '@headlessui/react';
@@ -10,6 +9,7 @@ import { Float } from '@headlessui-float/react';
 import { useState, type FC } from 'react';
 import { auth } from '~/services/firebase/client';
 import Modal from '../modal';
+import { publicImagesHref } from '~/lib/constants/public';
 
 const UserButton: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,15 +32,11 @@ const UserButton: FC = () => {
             tailwindcssOriginClass
           >
             <Popover.Button className="flex h-8 w-8 flex-shrink-0 items-center justify-center outline-none">
-              {user?.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt="User profile photo"
-                  className=" rounded-full "
-                />
-              ) : (
-                <HiUserCircle className="h-full w-full" />
-              )}
+              <img
+                src={user?.photoURL ?? publicImagesHref.userIcon}
+                alt="User profile photo"
+                className="rounded-full"
+              />
             </Popover.Button>
 
             <Popover.Panel className="flex flex-col divide-y whitespace-nowrap rounded-lg bg-white font-medium shadow-lg">
