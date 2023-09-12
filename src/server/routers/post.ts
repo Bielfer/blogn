@@ -9,27 +9,29 @@ import {
   formatDocument,
   snapshotToArray,
 } from '~/lib/helpers/firebase';
-import { postStatusValues } from '~/lib/constants/posts';
+import { postStatus, postStatusValues } from '~/lib/constants/posts';
 import { getPostById } from '~/lib/fetchers/post';
 
 const postSchema = z.object({
   id: z.string(),
-  content: z.object({
-    version: z.string().optional(),
-    blocks: z.any().array(),
-    time: z.number().optional(),
-  }),
-  title: z.string(),
-  urlTitle: z.string(),
-  SEOTitle: z.string(),
-  SEODescription: z.string(),
-  status: z.enum(postStatusValues),
-  publishedAt: z.date(),
+  content: z
+    .object({
+      version: z.string().optional(),
+      blocks: z.any().array().default([]),
+      time: z.number().optional(),
+    })
+    .default({ blocks: [] }),
+  title: z.string().default(''),
+  urlTitle: z.string().default(''),
+  SEOTitle: z.string().default(''),
+  SEODescription: z.string().default(''),
+  status: z.enum(postStatusValues).default(postStatus.draft),
+  publishedAt: z.date().default(new Date()),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
-const setPostSchema = postSchema
+export const setPostSchema = postSchema
   .omit({ createdAt: true, updatedAt: true })
   .extend({ id: z.string().optional() });
 
