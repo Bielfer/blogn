@@ -1,12 +1,13 @@
-import clsx from "clsx";
-import { type FC } from "react";
-import Spinner from "../spinner";
+import clsx from 'clsx';
+import { type FC } from 'react';
+import Spinner from '../spinner';
 
 interface Props {
   isLoading: boolean;
   children: JSX.Element;
   className?: string;
   hiddenChildren?: boolean;
+  page?: boolean;
 }
 
 const LoadingWrapper: FC<Props> = ({
@@ -14,12 +15,13 @@ const LoadingWrapper: FC<Props> = ({
   children,
   className,
   hiddenChildren = false,
+  page = false,
 }) => {
   if (isLoading)
     return (
       <>
-        <div className={clsx("flex justify-center", className)}>
-          <Spinner size="lg" />
+        <div className={clsx('flex justify-center', className)}>
+          <Spinner size="lg" page={page} />
         </div>
         {hiddenChildren && <div className="hidden">{children}</div>}
       </>
