@@ -1,7 +1,13 @@
 'use client';
 import { Form, Formik, useFormikContext } from 'formik';
 import dynamic from 'next/dynamic';
-import { type FC, useState, useEffect } from 'react';
+import {
+  type FC,
+  useState,
+  useCallback,
+  type SetStateAction,
+  type Dispatch,
+} from 'react';
 import Container from '~/components/container';
 import Modal from '~/components/modal';
 import Navbar from '~/components/navbar';
@@ -10,37 +16,51 @@ import PostSettings from './post-settings';
 import Title from './title';
 import Link from 'next/link';
 import { routes } from '~/lib/constants/routes';
-import { useLocalStorage } from 'react-use';
-import { localStorageKeys } from '~/lib/constants/local-storage';
+import { useTimeoutFn, useUpdateEffect } from 'react-use';
 import { trpc } from '~/lib/trpc';
 import { useRouter } from 'next/navigation';
 import { tryCatch } from '~/lib/helpers/try-catch';
-import { parseISO } from 'date-fns';
 import Spinner from '~/components/spinner';
 import {
+  HiOutlineCheckBadge,
+  HiOutlineCloudArrowUp,
   HiOutlineCog8Tooth,
   HiOutlineEye,
   HiOutlineHome,
   HiOutlineRocketLaunch,
 } from 'react-icons/hi2';
-import { useToast, useUser } from '~/store';
+import { useToast } from '~/store';
 import UserButton from '~/components/user-button';
+import { postStatus } from '~/lib/constants/posts';
+import { type Post } from '~/server/routers/post';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
-const FormPost: FC = () => {
+export const initialValues = {
+  title: '',
+  content: { blocks: [] },
+  urlTitle: '',
+  SEOTitle: '',
+  SEODescription: '',
+  publishedAt: new Date(),
+  status: '',
+};
+
+type Props = {
+  post?: Post;
+};
+
+const FormPost: FC<Props> = ({ post }) => {
   const router = useRouter();
   const { addToast } = useToast();
-  const { mutateAsync: createPost } = trpc.post.create.useMutation();
-  const [localStorageValues, setLocalStorageValues] = useLocalStorage<
-    typeof initialValues
-  >(localStorageKeys.formPost);
+  const { mutateAsync: setPost } = trpc.post.set.useMutation();
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { status } = useUser();
-  const isSignedIn = status === 'authenticated';
+  const [isSavingForm, setIsSavingForm] = useState<boolean>();
 
-  const getNavbarItems = (isSubmitting: boolean) => [
+  const isUpdatingPost = post?.status === postStatus.published;
+
+  const getNavbarItems = ({ isSubmitting }: { isSubmitting: boolean }) => [
     {
       name: 'Settings',
       icon: <HiOutlineCog8Tooth className="h-5 w-5" />,
@@ -52,9 +72,11 @@ const FormPost: FC = () => {
       action: () => setIsPostPreviewOpen(true),
     },
     {
-      name: 'Publish',
+      name: isUpdatingPost ? 'Save' : 'Publish',
       icon: isSubmitting ? (
         <Spinner size="sm" color="inherit" />
+      ) : isUpdatingPost ? (
+        <HiOutlineCloudArrowUp className="h-5 w-5" />
       ) : (
         <HiOutlineRocketLaunch className="h-5 w-5" />
       ),
@@ -62,27 +84,14 @@ const FormPost: FC = () => {
     },
   ];
 
-  const initialValues = {
-    title: '',
-    content: { blocks: [] },
-    urlTitle: '',
-    SEOTitle: '',
-    SEODescription: '',
-    publishedAt: new Date(),
-  };
-
   const handleSubmit = async (values: typeof initialValues) => {
-    if (!isSignedIn) {
-      router.push(routes.appSignIn);
-      return;
-    }
-
-    const { publishedAt } = values;
     const [, error] = await tryCatch(
-      createPost({
+      setPost({
         ...values,
-        publishedAt:
-          typeof publishedAt === 'string' ? parseISO(publishedAt) : publishedAt,
+        SEOTitle: values.SEOTitle || values.title,
+        urlTitle:
+          values.urlTitle || values.title.toLowerCase().replaceAll(' ', '-'),
+        status: postStatus.published,
       })
     );
 
@@ -94,18 +103,19 @@ const FormPost: FC = () => {
       return;
     }
 
-    setLocalStorageValues(initialValues);
     router.push(routes.appPosts);
   };
 
   return (
     <Formik
-      initialValues={localStorageValues ?? initialValues}
+      initialValues={
+        !!post ? (post as unknown as typeof initialValues) : initialValues
+      }
       onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
         <Form>
-          <SaveFormToLocalStorage />
+          <SaveForm setIsSavingForm={setIsSavingForm} post={post} />
           <Modal
             className="w-full max-w-md"
             isOpen={isSettingsOpen}
@@ -123,37 +133,39 @@ const FormPost: FC = () => {
           </Modal>
 
           <Navbar
-            items={getNavbarItems(isSubmitting)}
+            items={getNavbarItems({
+              isSubmitting,
+            })}
             onRight={
-              isSignedIn ? (
-                <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
-                  <Link
-                    href={routes.appPosts}
-                    className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
-                  >
-                    <HiOutlineHome className="h-6" />
-                    Dashboard
-                  </Link>
-                  <UserButton />
-                </div>
-              ) : (
+              <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
+                {isSavingForm !== undefined && (
+                  <div className="pr-6">
+                    {isSavingForm ? (
+                      <span className="flex items-center gap-x-2 text-sm text-gray-500">
+                        <Spinner size="sm" className="" />
+                        Saving
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-x-2 text-sm text-green-400">
+                        <HiOutlineCheckBadge className="h-5 w-5" />
+                        Saved
+                      </span>
+                    )}
+                  </div>
+                )}
                 <Link
-                  className="text-sm font-semibold leading-6 text-gray-900"
-                  href={{
-                    pathname: routes.appSignIn,
-                    query: {
-                      afterSignUpUrl: routes.appPostEditor,
-                      afterSignInUrl: routes.appPostEditor,
-                    },
-                  }}
+                  href={routes.appPosts}
+                  className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 lg:mr-3 lg:text-sm"
                 >
-                  Log in <span aria-hidden="true">&rarr;</span>
+                  <HiOutlineHome className="h-6" />
+                  Dashboard
                 </Link>
-              )
+                <UserButton />
+              </div>
             }
           />
           <Container className="prose pb-32 pt-8" smallerContainer>
-            <Title />
+            <Title post={post} />
             <Editor />
           </Container>
         </Form>
@@ -162,13 +174,44 @@ const FormPost: FC = () => {
   );
 };
 
-const SaveFormToLocalStorage: FC = () => {
-  const [, setStorageValues] = useLocalStorage(localStorageKeys.formPost);
-  const { values } = useFormikContext();
+const SaveForm: FC<{
+  post?: Post;
+  setIsSavingForm: Dispatch<SetStateAction<boolean | undefined>>;
+}> = ({ setIsSavingForm, post }) => {
+  const { addToast } = useToast();
+  const { mutateAsync: setPost } = trpc.post.set.useMutation();
+  const { values } = useFormikContext<typeof initialValues>();
 
-  useEffect(() => {
-    setStorageValues(values);
-  }, [values, setStorageValues]);
+  const updateForm = useCallback(async () => {
+    if (post?.status === postStatus.published) return;
+
+    setIsSavingForm(true);
+
+    const [, error] = await tryCatch(
+      setPost({
+        ...values,
+        status: postStatus.draft,
+      })
+    );
+
+    if (error)
+      addToast({
+        type: 'warning',
+        content:
+          'Something failed when saving automatically, try typing something else',
+        duration: 2000,
+      });
+
+    setIsSavingForm(false);
+  }, [setPost, values, addToast, setIsSavingForm, post]);
+
+  const [, cancel, reset] = useTimeoutFn(updateForm, 1500);
+
+  useUpdateEffect(() => {
+    reset();
+
+    return () => cancel();
+  }, [reset, cancel, values]);
 
   return null;
 };
