@@ -10,6 +10,7 @@ import {
   snapshotToArray,
 } from '~/lib/helpers/firebase';
 import { postStatusValues } from '~/lib/constants/posts';
+import { getPostById } from '~/lib/fetchers/post';
 
 const postSchema = z.object({
   id: z.string(),
@@ -32,7 +33,7 @@ const setPostSchema = postSchema
   .omit({ createdAt: true, updatedAt: true })
   .extend({ id: z.string().optional() });
 
-type Post = z.infer<typeof postSchema>;
+export type Post = z.infer<typeof postSchema>;
 
 export const postRouter = router({
   get: privateProcedure
@@ -44,9 +45,7 @@ export const postRouter = router({
     .query(async ({ input }) => {
       const { id } = input;
 
-      const [postSnapshot, error] = await tryCatch(
-        db.collection(collections.posts).doc(id).get()
-      );
+      const [postSnapshot, error] = await tryCatch(getPostById(id));
 
       if (error || !postSnapshot)
         throw new TRPCError({ code: 'BAD_REQUEST', message: error });
