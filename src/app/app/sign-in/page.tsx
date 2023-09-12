@@ -7,10 +7,19 @@ export const metadata: Metadata = {
   title: 'Sign In',
 };
 
-const SignInPage: FC = () => {
+type Props = {
+  searchParams?: {
+    afterLoginUrl?: string;
+  };
+};
+
+const SignInPage: FC<Props> = ({ searchParams }) => {
   return (
     <div className="flex h-screen items-center justify-center">
-      <FormSignIn title="Sign In" afterLoginUrl={routes.appPosts} />
+      <FormSignIn
+        title="Sign In"
+        afterLoginUrl={searchParams?.afterLoginUrl ?? routes.appPosts}
+      />
     </div>
   );
 };
