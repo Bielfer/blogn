@@ -57,4 +57,6 @@ export const snapshotToArray = <T>(
 };
 
 export const isTimestamp = (timestamp: any) =>
-  typeof timestamp === 'object' && timestamp.seconds && timestamp.nanoseconds;
+  typeof timestamp === 'object' &&
+  (('seconds' in timestamp && 'nanoseconds' in timestamp) ||
+    ('_seconds' in timestamp && '_nanoseconds' in timestamp));
