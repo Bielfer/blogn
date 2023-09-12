@@ -21,8 +21,8 @@ const PostListWrapper: FC = () => {
       title: post.title,
       href: { pathname: routes.appPostEditor, query: { postId: post.id } },
       description: post.SEODescription || 'No description provided',
-      date: format(post.updatedAt, 'MMM d, yyyy'),
-      datetime: format(post.updatedAt, 'yyyy-MM-dd'),
+      date: format(post.publishedAt, 'MMM d, yyyy'),
+      datetime: format(post.publishedAt, 'yyyy-MM-dd'),
       category: { title: 'Test', href: '/' },
       author: {
         name: user?.displayName ?? 'No name provided',
@@ -33,7 +33,7 @@ const PostListWrapper: FC = () => {
 
   return (
     <LoadingWrapper isLoading={isLoading}>
-      <PostsList posts={formattedPosts} columns={3} />
+      <PostsList posts={formattedPosts} columns={3} className="pb-32" />
     </LoadingWrapper>
   );
 };
