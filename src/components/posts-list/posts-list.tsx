@@ -36,7 +36,7 @@ const PostsList: FC<Props> = ({ columns = 1, className, posts }) => {
   return (
     <div
       className={cn(
-        'mt-10 grid grid-cols-1 gap-x-8 gap-y-16 sm:mt-16',
+        'grid grid-cols-1 gap-x-8 gap-y-16',
         className,
         columnsStyles[columns]
       )}
