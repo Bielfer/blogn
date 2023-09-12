@@ -1,7 +1,12 @@
 import { useField } from 'formik';
 import { useEffect, type FC, useRef } from 'react';
+import { type Post } from '~/server/routers/post';
 
-const Title: FC = () => {
+type Props = {
+  post?: Post;
+};
+
+const Title: FC<Props> = ({ post }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [, { initialValue }, { setValue }] = useField<string>('title');
 
@@ -12,7 +17,7 @@ const Title: FC = () => {
 
   return (
     <div className="relative text-4xl font-bold">
-      {!ref.current?.textContent && (
+      {!ref.current?.textContent && !post?.title && (
         <div className="absolute -z-10 text-gray-500">Post title</div>
       )}
       <div
