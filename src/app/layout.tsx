@@ -22,12 +22,12 @@ export const metadata: Metadata = {
   description:
     'The easiest and fastest way to create your blog. No unnecessary steps, you can just focus on writing',
   icons: {
-    icon: '/icon.png',
-    shortcut: '/icon.png',
-    apple: '/icon.png',
+    icon: '/icon-black.png',
+    shortcut: '/icon-black.png',
+    apple: '/icon-black.png',
     other: {
       rel: 'icon',
-      url: '/icon.png',
+      url: '/icon-black.png',
     },
   },
 };
