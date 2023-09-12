@@ -9,6 +9,7 @@ import {
   formatDocument,
   snapshotToArray,
 } from '~/lib/helpers/firebase';
+import { postStatusValues } from '~/lib/constants/posts';
 
 const postSchema = z.object({
   id: z.string(),
@@ -21,17 +22,15 @@ const postSchema = z.object({
   urlTitle: z.string(),
   SEOTitle: z.string(),
   SEODescription: z.string(),
+  status: z.enum(postStatusValues),
   publishedAt: z.date(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
-const createPostSchema = postSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-const updatePostSchema = postSchema.omit({ createdAt: true, updatedAt: true });
+const setPostSchema = postSchema
+  .omit({ createdAt: true, updatedAt: true })
+  .extend({ id: z.string().optional() });
 
 type Post = z.infer<typeof postSchema>;
 
@@ -68,7 +67,9 @@ export const postRouter = router({
         conditionalWheres(db.collection(collections.posts), [
           ['organizationId', '==', organizationId],
           ['uid', '==', uid],
-        ]).get()
+        ])
+          .orderBy('publishedAt', 'desc')
+          .get()
       );
 
       if (error || !postsSnapshot)
@@ -78,38 +79,18 @@ export const postRouter = router({
 
       return posts;
     }),
-  create: privateProcedure
-    .input(createPostSchema)
-    .mutation(async ({ input, ctx }) => {
-      const { uid } = ctx.decodedIdToken;
-
-      const [postRef, error] = await tryCatch(
-        db.collection(collections.posts).add({
-          ...input,
-          uid,
-        })
-      );
-
-      if (!postRef || error)
-        throw new TRPCError({ code: 'BAD_REQUEST', message: error });
-
-      const [postSnapshot, errorGettingPost] = await tryCatch(postRef.get());
-
-      if (!postSnapshot || errorGettingPost)
-        throw new TRPCError({ code: 'BAD_REQUEST', message: errorGettingPost });
-
-      return formatDocument<Post>(postSnapshot);
-    }),
-  update: privateProcedure
-    .input(updatePostSchema)
+  set: privateProcedure
+    .input(setPostSchema)
     .mutation(async ({ input, ctx }) => {
       const { uid } = ctx.decodedIdToken;
       const { id, ...filteredInput } = input;
 
-      const postRef = db.collection(collections.posts).doc(id);
+      const postRef = !!id
+        ? db.collection(collections.posts).doc(id)
+        : db.collection(collections.posts).doc();
 
       const [, error] = await tryCatch(
-        postRef.update({
+        postRef.set({
           ...filteredInput,
           uid,
         })
