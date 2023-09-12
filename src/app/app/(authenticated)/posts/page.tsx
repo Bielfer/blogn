@@ -1,10 +1,9 @@
 import { type Metadata } from 'next';
 import { type FC } from 'react';
-import MyLink from '~/components/my-link';
 import DashboardNavbar from '~/components/dashboard-navbar';
-import { dashboardRoutes, routes } from '~/lib/constants/routes';
-import { HiMiniPlus } from 'react-icons/hi2';
+import { dashboardRoutes } from '~/lib/constants/routes';
 import PostListWrapper from './post-list-wrapper';
+import ButtonNewPost from './button-new-post';
 
 export const metadata: Metadata = {
   title: 'Your Posts',
@@ -16,13 +15,7 @@ const Posts: FC = () => {
     <DashboardNavbar items={dashboardRoutes}>
       <header className="flex items-center justify-between">
         <h1>Posts</h1>
-        <MyLink
-          href={routes.appPostEditor}
-          iconRight={HiMiniPlus}
-          variant="button-primary"
-        >
-          New Post
-        </MyLink>
+        <ButtonNewPost />
       </header>
       <PostListWrapper />
     </DashboardNavbar>
