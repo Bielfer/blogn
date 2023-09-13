@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { type FC } from 'react';
 import { type Url } from 'url';
 import cn from '~/lib/helpers/cn';
+import Badge from '../badge';
+import { type BadgeProps } from '../badge/badge';
 
 type Post = {
   id: string;
@@ -10,13 +12,11 @@ type Post = {
   href: Partial<Url> | string;
   title: string;
   description: string;
+  badges?: ({ text: string } & Partial<BadgeProps>)[];
   author: {
     imageUrl: string;
     name: string;
     role: string;
-  };
-  category: {
-    title: string;
   };
 };
 
@@ -48,9 +48,11 @@ const PostsList: FC<Props> = ({ columns = 1, className, posts }) => {
               <time dateTime={post.datetime} className="text-gray-500">
                 {post.date}
               </time>
-              <span className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600">
-                {post.category.title}
-              </span>
+              {post.badges?.map(({ text, ...rest }) => (
+                <Badge key={text} {...rest}>
+                  {text}
+                </Badge>
+              ))}
             </div>
             <div className="relative">
               <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900">
