@@ -10,8 +10,10 @@ type Props = {
 const Logo: FC<Props> = ({ className }) => {
   return (
     <Image
-      className={cn('h-16 w-auto', className)}
+      className={cn(className)}
       src={logoWhiteBlack}
+      height={71}
+      width={115}
       alt="Blogn logo"
     />
   );
