@@ -5,6 +5,7 @@ import { HiOutlinePencilSquare } from 'react-icons/hi2';
 import EmptyState from '~/components/empty-state';
 import LoadingWrapper from '~/components/loading-wrapper';
 import PostsList from '~/components/posts-list';
+import { postStatus, postStatusNames } from '~/lib/constants/posts';
 import { publicImagesHref } from '~/lib/constants/public';
 import { routes } from '~/lib/constants/routes';
 import { trpc } from '~/lib/trpc';
@@ -25,12 +26,53 @@ const PostListWrapper: FC = () => {
       description: post.SEODescription || 'No description provided',
       date: format(post.publishedAt, 'MMM d, yyyy'),
       datetime: format(post.publishedAt, 'yyyy-MM-dd'),
-      category: { title: 'Test', href: '/' },
       author: {
         name: user?.displayName ?? 'No name provided',
         role: '',
         imageUrl: user?.photoURL ?? publicImagesHref.userIcon,
       },
+      badges: [
+        {
+          text: postStatusNames[post.status],
+          color:
+            post.status === postStatus.published
+              ? ('green' as const)
+              : ('yellow' as const),
+          pill: true,
+        },
+        {
+          text: postStatusNames[post.status],
+          color:
+            post.status === postStatus.published
+              ? ('green' as const)
+              : ('yellow' as const),
+          pill: true,
+        },
+        {
+          text: postStatusNames[post.status],
+          color:
+            post.status === postStatus.published
+              ? ('green' as const)
+              : ('yellow' as const),
+          pill: true,
+        },
+        {
+          text: postStatusNames[post.status],
+          color:
+            post.status === postStatus.published
+              ? ('green' as const)
+              : ('yellow' as const),
+          pill: true,
+        },
+        {
+          text: postStatusNames[post.status],
+          color:
+            post.status === postStatus.published
+              ? ('green' as const)
+              : ('yellow' as const),
+          pill: true,
+        },
+      ],
     })) ?? [];
 
   return (

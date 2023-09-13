@@ -10,3 +10,8 @@ export type PostStatus = ObjectValues<typeof postStatus>;
 export const postStatusValues = Object.values(
   postStatus
 ) as unknown as readonly [PostStatus, ...PostStatus[]];
+
+export const postStatusNames = {
+  DRAFT: 'Draft',
+  PUBLISHED: 'Published',
+} as const;
