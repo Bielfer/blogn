@@ -22,7 +22,6 @@ import { useRouter } from 'next/navigation';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import Spinner from '~/components/spinner';
 import {
-  HiOutlineCheckBadge,
   HiOutlineCloudArrowUp,
   HiOutlineCog8Tooth,
   HiOutlineEye,
@@ -33,6 +32,7 @@ import { useToast } from '~/store';
 import UserButton from '~/components/user-button';
 import { postStatus } from '~/lib/constants/posts';
 import { type Post } from '~/server/routers/post';
+import SavingIndicator from './saving-indicator';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
@@ -113,7 +113,7 @@ const FormPost: FC<Props> = ({ post }) => {
       }
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, submitForm }) => (
         <Form>
           <SaveForm setIsSavingForm={setIsSavingForm} post={post} />
           <Modal
@@ -133,24 +133,23 @@ const FormPost: FC<Props> = ({ post }) => {
           </Modal>
 
           <Navbar
+            className="fixed w-screen"
+            submitForm={submitForm}
             items={getNavbarItems({
               isSubmitting,
             })}
+            onMiddle={
+              <div className="flex w-full flex-grow justify-center lg:hidden">
+                {isSavingForm !== undefined && (
+                  <SavingIndicator isSavingForm={isSavingForm} />
+                )}
+              </div>
+            }
             onRight={
               <div className="flex flex-col gap-y-3 lg:flex-row lg:items-center lg:gap-x-3 lg:gap-y-0">
                 {isSavingForm !== undefined && (
-                  <div className="pr-6">
-                    {isSavingForm ? (
-                      <span className="flex items-center gap-x-2 text-sm text-gray-500">
-                        <Spinner size="sm" className="" />
-                        Saving
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-x-2 text-sm text-green-400">
-                        <HiOutlineCheckBadge className="h-5 w-5" />
-                        Saved
-                      </span>
-                    )}
+                  <div className="hidden pr-6 lg:block">
+                    <SavingIndicator isSavingForm={isSavingForm} />
                   </div>
                 )}
                 <Link
@@ -164,7 +163,7 @@ const FormPost: FC<Props> = ({ post }) => {
               </div>
             }
           />
-          <Container className="prose pb-32 pt-8" smallerContainer>
+          <Container className="prose py-32" smallerContainer>
             <Title post={post} />
             <Editor />
           </Container>
