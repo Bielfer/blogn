@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import cn from '~/lib/helpers/cn';
 
-type Props = {
+export type BadgeProps = {
   children: ReactNode;
   size?: keyof typeof sizes;
   color?: keyof typeof colors;
@@ -67,7 +67,7 @@ const colors = {
   },
 };
 
-const Badge: FC<Props> = ({
+const Badge: FC<BadgeProps> = ({
   children,
   size = 'md',
   color = 'gray',
