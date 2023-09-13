@@ -3,6 +3,7 @@ import { type Item } from './navbar';
 
 type Props = Item & {
   className?: string;
+  submitForm?: () => void;
 };
 
 const ButtonOrLink: FC<Props> = ({
@@ -12,6 +13,7 @@ const ButtonOrLink: FC<Props> = ({
   action,
   className,
   buttonType = 'button',
+  submitForm,
 }) =>
   !!href ? (
     <a href={href} className={className}>
@@ -19,7 +21,14 @@ const ButtonOrLink: FC<Props> = ({
       <span>{name}</span>
     </a>
   ) : (
-    <button className={className} onClick={action} type={buttonType}>
+    <button
+      className={className}
+      onClick={() => {
+        if (action) action();
+        if (buttonType === 'submit' && submitForm) submitForm();
+      }}
+      type={buttonType}
+    >
       {!!Icon && Icon}
       <span>{name}</span>
     </button>

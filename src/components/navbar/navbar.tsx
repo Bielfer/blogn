@@ -1,9 +1,10 @@
 'use client';
-import { type FC, useState } from 'react';
+import { type FC, useState, type ReactNode } from 'react';
 import { Dialog } from '@headlessui/react';
 import ButtonOrLink from './button-or-link';
 import Logo from '../logo';
 import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
+import cn from '~/lib/helpers/cn';
 
 export type Item = {
   name: string;
@@ -16,23 +17,33 @@ export type Item = {
 type Props = {
   items?: Item[];
   onRight?: JSX.Element;
+  submitForm: () => void;
+  onMiddle?: ReactNode;
+  className?: string;
 };
 
-const Navbar: FC<Props> = ({ items, onRight }) => {
+const Navbar: FC<Props> = ({
+  items,
+  onRight,
+  submitForm,
+  onMiddle,
+  className,
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white">
+    <header className={cn('bg-white', className)}>
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
+            <span className="sr-only">Blogn Logo</span>
             <Logo />
           </a>
         </div>
+        {onMiddle}
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -83,6 +94,7 @@ const Navbar: FC<Props> = ({ items, onRight }) => {
                   <ButtonOrLink
                     key={item.name}
                     {...item}
+                    submitForm={submitForm}
                     className="-mx-3 flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   />
                 ))}
