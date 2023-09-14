@@ -13,7 +13,6 @@ const Logo: FC<Props> = ({ className }) => {
       className={cn(className)}
       src={logoWhiteBlack}
       height={71}
-      width={115}
       alt="Blogn logo"
     />
   );
