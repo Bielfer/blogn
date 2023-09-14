@@ -1,8 +1,7 @@
 import { TRPCError, initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { type Context } from './context';
-import { auth } from '~/services/firebase/admin';
-import { tryCatch } from '~/lib/helpers/try-catch';
+import { isAuthenticated as isAuthenticatedHelper } from '~/lib/fetchers/auth';
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -21,20 +20,14 @@ const logger = middleware(async ({ path, type, next }) => {
   return result;
 });
 
-const isAuthenticated = middleware(async ({ ctx, next }) => {
-  if (!ctx.idToken) {
-    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No token provided' });
-  }
-  const [decodedIdToken, error] = await tryCatch(
-    auth.verifyIdToken(ctx.idToken)
-  );
+const isAuthenticated = middleware(async ({ next }) => {
+  const decodedIdToken = await isAuthenticatedHelper();
 
-  if (error || !decodedIdToken)
+  if (!decodedIdToken)
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid token' });
 
   return next({
     ctx: {
-      idToken: ctx.idToken,
       decodedIdToken,
     },
   });
