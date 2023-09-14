@@ -29,5 +29,10 @@ export const getUser = async () => {
 
   if (!user || error) return null;
 
-  return user;
+  return {
+    uid: user.uid,
+    photoURL: user.photoURL,
+    customClaims: user.customClaims,
+    displayName: user.displayName,
+  };
 };
