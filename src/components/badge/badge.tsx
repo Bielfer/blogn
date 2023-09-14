@@ -103,6 +103,7 @@ const Badge: FC<BadgeProps> = ({
             'group relative -mr-1 h-3.5 w-3.5 rounded-sm',
             colors[color].button
           )}
+          onClick={onClick}
         >
           <span className="sr-only">Remove</span>
           <svg
