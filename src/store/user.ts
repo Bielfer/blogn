@@ -1,10 +1,11 @@
-import { type User } from "firebase/auth";
-import { create } from "zustand";
+import { create } from 'zustand';
+import { type getUser } from '~/lib/fetchers/auth';
+
+export type User = Awaited<ReturnType<typeof getUser>>;
 
 type UserState = {
   setUser: (user: User | null) => void;
   user?: User | null;
-  status: "authenticated" | "loading" | "unauthenticated";
 };
 
 const useUserStore = create<UserState>((set) => ({
@@ -12,9 +13,7 @@ const useUserStore = create<UserState>((set) => ({
   setUser: (user) =>
     set(() => ({
       user,
-      status: !!user ? "authenticated" : "unauthenticated",
     })),
-  status: "loading",
 }));
 
 export default useUserStore;
