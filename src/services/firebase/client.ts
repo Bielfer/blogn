@@ -1,7 +1,12 @@
-import { getApps, initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
-import { env } from "~/env.mjs";
+import { getApps, initializeApp } from 'firebase/app';
+import {
+  GoogleAuthProvider,
+  getAuth,
+  setPersistence,
+  inMemoryPersistence,
+} from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
+import { env } from '~/env.mjs';
 
 const firebaseConfig = {
   apiKey: env.NEXT_PUBLIC_API_KEY,
@@ -16,6 +21,7 @@ export const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
+setPersistence(auth, inMemoryPersistence);
 
 export const googleProvider = new GoogleAuthProvider();
 
