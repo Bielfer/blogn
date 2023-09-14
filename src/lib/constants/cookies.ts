@@ -1,3 +1,3 @@
 export const cookiesKeys = {
-  idToken: 'id_token',
-};
+  session: 'session',
+} as const;
