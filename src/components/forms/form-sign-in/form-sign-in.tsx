@@ -6,16 +6,16 @@ import FormikInput from '../formik-input';
 import { Form, Formik } from 'formik';
 import { z } from 'zod';
 import {
-  isSignInWithEmailLink,
+  type UserCredential,
   sendSignInLinkToEmail,
   signInWithEmailLink,
   signInWithPopup,
+  isSignInWithEmailLink,
 } from 'firebase/auth';
 import { auth, googleProvider } from '~/services/firebase/client';
 import { useRouter } from 'next/navigation';
 import { env } from '~/env.mjs';
 import { useLocalStorage, useMount } from 'react-use';
-import LoadingWrapper from '~/components/loading-wrapper';
 import Logo from '~/components/logo';
 import { useToast } from '~/store';
 import { tryCatch } from '~/lib/helpers/try-catch';
@@ -23,6 +23,8 @@ import { localStorageKeys } from '~/lib/constants/local-storage';
 import { validations } from '~/lib/constants/validations';
 import { routes } from '~/lib/constants/routes';
 import { zodValidator } from '~/lib/helpers/zod';
+import { trpc } from '~/lib/trpc';
+import LoadingWrapper from '~/components/loading-wrapper';
 
 type Props = {
   title: string;
@@ -32,11 +34,12 @@ type Props = {
 const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
   const { addToast } = useToast();
   const router = useRouter();
-  const [isLoadingEmailLogin, setIsLoadingEmailLogin] = useState(false);
   const [emailForSignIn, setEmailForSignIn] = useLocalStorage(
     localStorageKeys.emailForSignIn,
     ''
   );
+  const [isLoadingEmailRedirect, setIsLoadingEmailRedirect] = useState(false);
+  const { mutateAsync: getSessionCookie } = trpc.auth.login.useMutation();
 
   const initialValues = { email: '' };
 
@@ -52,15 +55,59 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
   const handleGoogle = async () => {
     const [res, error] = await tryCatch(signInWithPopup(auth, googleProvider));
 
+    const [success, errorSessionCookie] = await tryCatch(
+      setSessionCookie({
+        res,
+        error,
+        errorMessage: 'Failed to enter with google, try again',
+      })
+    );
+
+    if (!success || errorSessionCookie) return;
+
+    router.push(afterLoginUrl);
+  };
+
+  const setSessionCookie = async ({
+    res,
+    error,
+    errorMessage,
+  }: {
+    res: UserCredential | null;
+    error: any;
+    errorMessage: string;
+  }) => {
     if (error || !res?.user) {
       addToast({
         type: 'error',
-        content: 'Failed to enter using Google, try again',
+        content: errorMessage,
       });
-      return;
+      return false;
     }
 
-    router.push(afterLoginUrl);
+    const [idToken, errorIdToken] = await tryCatch(res.user.getIdToken());
+
+    if (!idToken || errorIdToken) {
+      addToast({
+        type: 'error',
+        content: errorMessage,
+      });
+      return false;
+    }
+
+    const [, errorSessionCookie] = await tryCatch(
+      getSessionCookie({ idToken })
+    );
+
+    if (errorSessionCookie) {
+      addToast({
+        type: 'error',
+        content: errorMessage,
+      });
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (values: z.infer<typeof validationSchema>) => {
@@ -91,7 +138,8 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
   useMount(() => {
     (async () => {
       if (!isSignInWithEmailLink(auth, window.location.href)) return;
-      setIsLoadingEmailLogin(true);
+
+      setIsLoadingEmailRedirect(true);
 
       let email: string | null | undefined = emailForSignIn;
 
@@ -103,13 +151,15 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
         signInWithEmailLink(auth, email ?? '', window.location.href)
       );
 
-      if (error || !res?.user) {
-        addToast({
-          type: 'error',
-          content: 'Failed to sign in with your email, try again',
-        });
-        return;
-      }
+      const [success, errorSessionCookie] = await tryCatch(
+        setSessionCookie({
+          res,
+          error,
+          errorMessage: 'Failed to enter with magic link, try again',
+        })
+      );
+
+      if (!success || errorSessionCookie) return;
 
       setEmailForSignIn(undefined);
       router.push(afterLoginUrl);
@@ -117,7 +167,7 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
   });
 
   return (
-    <LoadingWrapper isLoading={isLoadingEmailLogin}>
+    <LoadingWrapper isLoading={isLoadingEmailRedirect} page>
       <Formik
         initialValues={initialValues}
         validate={zodValidator(validationSchema)}
