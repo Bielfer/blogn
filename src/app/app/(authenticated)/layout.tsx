@@ -1,22 +1,24 @@
-'use client';
-import type { FC, ReactNode } from 'react';
 import { redirect } from 'next/navigation';
-import { useUser } from '~/store';
-import Spinner from '~/components/spinner';
+import type { FC, ReactNode } from 'react';
 import { routes } from '~/lib/constants/routes';
+import { getUser } from '~/lib/fetchers/auth';
+import SetUser from './set-user';
 
 type Props = {
   children: ReactNode;
 };
 
-const AuthenticatedLayout: FC<Props> = ({ children }) => {
-  const { status } = useUser();
+const AuthenticatedLayout: FC<Props> = async ({ children }) => {
+  const user = await getUser();
 
-  if (status === 'loading') return <Spinner page size="lg" />;
+  if (!user) redirect(routes.appSignIn);
 
-  if (status === 'unauthenticated') redirect(routes.appSignIn);
-
-  return children;
+  return (
+    <>
+      {children}
+      <SetUser user={user} />
+    </>
+  );
 };
 
 export default AuthenticatedLayout;
