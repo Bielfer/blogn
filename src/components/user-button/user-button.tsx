@@ -7,13 +7,17 @@ import { useUser } from '~/store';
 import { Popover } from '@headlessui/react';
 import { Float } from '@headlessui-float/react';
 import { useState, type FC } from 'react';
-import { auth } from '~/services/firebase/client';
 import Modal from '../modal';
 import { publicImagesHref } from '~/lib/constants/public';
+import { trpc } from '~/lib/trpc';
+import { useRouter } from 'next/navigation';
+import { routes } from '~/lib/constants/routes';
 
 const UserButton: FC = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
+  const { mutateAsync } = trpc.auth.logout.useMutation();
 
   return (
     <>
@@ -54,7 +58,10 @@ const UserButton: FC = () => {
               <button
                 type="button"
                 className="flex items-center gap-x-3 px-6 py-3 text-left text-sm text-gray-600 transition duration-150 hover:bg-gray-50"
-                onClick={() => auth.signOut()}
+                onClick={async () => {
+                  await mutateAsync();
+                  router.replace(routes.appHome);
+                }}
               >
                 <HiOutlineArrowRightOnRectangle className="h-4 w-4" />
                 Sign Out

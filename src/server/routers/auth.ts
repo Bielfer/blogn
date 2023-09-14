@@ -70,6 +70,8 @@ export const authRouter = router({
 
     if (errorRevoking) throw new TRPCError({ code: 'BAD_REQUEST' });
 
+    cookieStore.delete(cookiesKeys.session);
+
     return { status: 'success' };
   }),
 });
