@@ -4,14 +4,13 @@ import {
   HiOutlineCog8Tooth,
 } from 'react-icons/hi2';
 import { useUser } from '~/store';
-import { Popover } from '@headlessui/react';
-import { Float } from '@headlessui-float/react';
 import { useState, type FC } from 'react';
 import Modal from '../modal';
 import { publicImagesHref } from '~/lib/constants/public';
 import { trpc } from '~/lib/trpc';
 import { useRouter } from 'next/navigation';
 import { routes } from '~/lib/constants/routes';
+import MyPopover from '../my-popover';
 
 const UserButton: FC = () => {
   const router = useRouter();
@@ -21,55 +20,30 @@ const UserButton: FC = () => {
 
   return (
     <>
-      <Popover className="relative">
-        {({ close }) => (
-          <Float
-            placement="bottom-end"
-            offset={10}
-            shift
-            enter="transition duration-200 ease-out"
-            enterFrom="scale-95 opacity-0"
-            enterTo="scale-100 opacity-100"
-            leave="transition duration-150 ease-in"
-            leaveFrom="scale-100 opacity-100"
-            leaveTo="scale-95 opacity-0"
-            tailwindcssOriginClass
-          >
-            <Popover.Button className="flex h-8 w-8 flex-shrink-0 items-center justify-center outline-none">
-              <img
-                src={user?.photoURL ?? publicImagesHref.userIcon}
-                alt="User profile photo"
-                className="rounded-full"
-              />
-            </Popover.Button>
-
-            <Popover.Panel className="flex flex-col divide-y whitespace-nowrap rounded-lg bg-white font-medium shadow-lg">
-              <button
-                type="button"
-                className="flex items-center gap-x-3 px-6 py-3 text-left text-sm text-gray-600 transition duration-150 hover:bg-gray-50"
-                onClick={() => {
-                  setIsOpen(true);
-                  close();
-                }}
-              >
-                <HiOutlineCog8Tooth className="h-4 w-4" />
-                Manage Account
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-x-3 px-6 py-3 text-left text-sm text-gray-600 transition duration-150 hover:bg-gray-50"
-                onClick={async () => {
-                  await mutateAsync();
-                  router.replace(routes.appHome);
-                }}
-              >
-                <HiOutlineArrowRightOnRectangle className="h-4 w-4" />
-                Sign Out
-              </button>
-            </Popover.Panel>
-          </Float>
-        )}
-      </Popover>
+      <MyPopover
+        button={
+          <img
+            src={user?.photoURL ?? publicImagesHref.userIcon}
+            alt="User profile photo"
+            className="h-8 w-8 rounded-full"
+          />
+        }
+        items={[
+          {
+            text: 'Manage Account',
+            onClick: () => setIsOpen(true),
+            onLeft: <HiOutlineCog8Tooth className="h-4 w-4" />,
+          },
+          {
+            text: 'Sign Out',
+            onClick: async () => {
+              await mutateAsync();
+              router.replace(routes.appHome);
+            },
+            onLeft: <HiOutlineArrowRightOnRectangle className="h-4 w-4" />,
+          },
+        ]}
+      />
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         Cu
       </Modal>
