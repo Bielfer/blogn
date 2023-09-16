@@ -18,7 +18,7 @@ export const userHasBlogs = async (user: User) => {
   );
 
   if (
-    (error || countSnapshot?.data().count === 0) &&
+    (error || !countSnapshot || countSnapshot.data().count === 0) &&
     pathname !== routes.appBlogsNewFirst
   )
     redirect(routes.appBlogsNewFirst);
