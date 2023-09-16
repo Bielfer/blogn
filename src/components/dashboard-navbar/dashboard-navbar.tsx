@@ -8,6 +8,7 @@ import Logo from '../logo';
 import Container from '../container';
 import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
 import UserButton from '../user-button';
+import BlogSwitcher from '../blog-switcher';
 
 export type Item = {
   name: string;
@@ -33,6 +34,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                   <div className="flex flex-shrink-0 items-center">
                     <Logo />
                   </div>
+                  <BlogSwitcher className="hidden sm:flex" />
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {items?.map((item) => {
                       const current = pathname === item.href;
@@ -99,8 +101,9 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                   );
                 })}
               </div>
-              <div className="border-t border-gray-200 p-4">
-                <UserButton />
+              <div className="flex flex-col justify-center gap-x-2 gap-y-3 border-t border-gray-200 p-4">
+                <BlogSwitcher />
+                <UserButton displayName />
               </div>
             </Disclosure.Panel>
           </>
