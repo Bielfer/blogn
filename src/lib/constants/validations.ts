@@ -1,12 +1,13 @@
 export const validations = {
-  required: 'Campo Obrigatório',
-  number: 'Insira apenas números',
-  calendar: 'Use o calendário para escolher a data',
-  valueGreaterThan: (num: number) => `Valor deve ser maior que ${num}`,
-  string: 'Insira apenas caracteres válidos',
-  email: 'Insira um email válido',
+  required: 'Required',
+  number: 'You can only use numbers',
+  calendar: 'Use the calendar to choose the date',
+  valueGreaterThan: (num: number) => `Value must be greater than ${num}`,
+  string: 'Please use valid characters',
+  email: 'Insert a valid email',
 };
 
 export const hints = {
-  required: 'Campo Obrigatório',
+  required: 'Required',
+  optional: 'Optional',
 };
