@@ -1,4 +1,4 @@
 export const localStorageKeys = {
-  formPost: 'form-post',
+  blogStore: 'blog-store',
   emailForSignIn: 'email_for_sign_in',
 } as const;
