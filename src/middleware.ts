@@ -18,10 +18,18 @@ export default function middleware(req: NextRequest) {
     .replace('.localhost:3000', `.${appUrl}`);
   const { pathname } = url;
 
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('pathname', pathname);
+
   if (hostname === appUrl)
-    return NextResponse.rewrite(new URL(`/app${pathname}`, req.url));
+    return NextResponse.rewrite(new URL(`/app${pathname}`, req.url), {
+      headers: requestHeaders,
+    });
 
   return NextResponse.rewrite(
-    new URL(`/blogs/${hostname}${pathname}`, req.url)
+    new URL(`/blogs/${hostname}${pathname}`, req.url),
+    {
+      headers: requestHeaders,
+    }
   );
 }
