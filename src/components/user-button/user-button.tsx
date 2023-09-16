@@ -12,7 +12,11 @@ import { useRouter } from 'next/navigation';
 import { routes } from '~/lib/constants/routes';
 import MyPopover from '../my-popover';
 
-const UserButton: FC = () => {
+type Props = {
+  displayName?: boolean;
+};
+
+const UserButton: FC<Props> = ({ displayName = false }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
@@ -21,12 +25,20 @@ const UserButton: FC = () => {
   return (
     <>
       <MyPopover
+        placement="bottom-end"
         button={
-          <img
-            src={user?.photoURL ?? publicImagesHref.userIcon}
-            alt="User profile photo"
-            className="h-8 w-8 rounded-full"
-          />
+          <div className="flex items-center gap-x-2">
+            <img
+              src={user?.photoURL ?? publicImagesHref.userIcon}
+              alt="User profile photo"
+              className="h-8 w-8 rounded-full"
+            />
+            {displayName && (
+              <span className="text-sm font-medium">
+                {user?.displayName ?? ''}
+              </span>
+            )}
+          </div>
         }
         items={[
           {
