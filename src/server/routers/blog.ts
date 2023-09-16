@@ -5,15 +5,16 @@ import { tryCatch } from '~/lib/helpers/try-catch';
 import { db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
 import { TRPCError } from '@trpc/server';
-import { formatDocument } from '~/lib/helpers/firebase';
+import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
 import { isBlogOwner } from '../middlewares';
 
 const blogSchema = z.object({
   id: z.string(),
   name: z.string(),
+  photoUrl: z.string().optional(),
   ownerUid: z.string(),
   editors: z.string().array(),
-  linkTwitter: z.string().optional(),
+  links: z.record(z.string()).optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -39,32 +40,58 @@ export const blogRouter = router({
 
       return formatDocument<Blog>(blogSnapshot);
     }),
+  getMany: privateProcedure
+    .input(z.object({ ownerUid: z.string() }))
+    .query(async ({ input }) => {
+      const { ownerUid } = input;
+
+      const [blogSnapshot, error] = await tryCatch(
+        db.collection(collections.blogs).where('ownerUid', '==', ownerUid).get()
+      );
+
+      if (error || !blogSnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
+
+      return snapshotToArray<Blog>(blogSnapshot);
+    }),
   create: privateProcedure
     .input(createBlogSchema)
     .mutation(async ({ input, ctx }) => {
       const { uid } = ctx.decodedIdToken;
 
-      const [, error] = await tryCatch(
+      const [blogRef, error] = await tryCatch(
         db.collection(collections.blogs).add({ ...input, ownerUid: uid })
       );
 
-      if (error) throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
+      if (error || !blogRef)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
 
-      return { message: 'Blog created' };
+      const [blogSnapshot, errorGettingBlog] = await tryCatch(blogRef.get());
+
+      if (errorGettingBlog || !blogSnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: errorGettingBlog });
+
+      return formatDocument<Blog>(blogSnapshot);
     }),
   update: privateProcedure
-    .use(isBlogOwner({ idKey: 'id' }))
     .input(updateBlogSchema)
+    .use(isBlogOwner({ idKey: 'id' }))
     .mutation(async ({ input }) => {
       const { id, ...inputWithoutId } = input;
 
-      const [, error] = await tryCatch(
-        db.collection(collections.blogs).doc(id).update(inputWithoutId)
-      );
+      const blogRef = db.collection(collections.blogs).doc(id);
 
-      if (error) throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
+      const [, error] = await tryCatch(blogRef.update(inputWithoutId));
 
-      return { message: 'Blog updated' };
+      if (error || !blogRef)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
+
+      const [blogSnapshot, errorGettingBlog] = await tryCatch(blogRef.get());
+
+      if (errorGettingBlog || !blogSnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: errorGettingBlog });
+
+      return formatDocument<Blog>(blogSnapshot);
     }),
   delete: privateProcedure
     .use(isBlogOwner({ idKey: 'id' }))
