@@ -10,7 +10,7 @@ type Props = {
 const AuthenticatedLayout: FC<Props> = async ({ children }) => {
   const user = await getUser();
 
-  userHasBlogs(user);
+  await userHasBlogs(user);
 
   return (
     <>
