@@ -3,7 +3,12 @@ import {
   type CollectionReference,
   type DocumentData,
 } from 'firebase-admin/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { storage } from '~/services/firebase/client';
+import { type ObjectValues } from '~/types/core';
 import { type BaseDocument } from '~/types/firebase';
+import { type bucketPaths } from '../constants/firebase';
+import { v4 as uuidv4 } from 'uuid';
 
 export const conditionalWheres = (
   docRef: CollectionReference<DocumentData>,
@@ -60,3 +65,16 @@ export const isTimestamp = (timestamp: any) =>
   typeof timestamp === 'object' &&
   (('seconds' in timestamp && 'nanoseconds' in timestamp) ||
     ('_seconds' in timestamp && '_nanoseconds' in timestamp));
+
+export const uploadFile = async (
+  file: Blob,
+  path: ObjectValues<typeof bucketPaths>
+) => {
+  const storageRef = ref(storage, `${path}/${uuidv4()}`);
+
+  await uploadBytes(storageRef, file);
+
+  const url = await getDownloadURL(storageRef);
+
+  return { url };
+};
