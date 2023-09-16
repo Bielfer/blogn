@@ -1,22 +1,25 @@
 import { Float } from '@headlessui-float/react';
 import { Popover } from '@headlessui/react';
 import type { FC, ReactNode } from 'react';
+import cn from '~/lib/helpers/cn';
 
 type Props = {
+  className?: string;
   button: ReactNode;
   items: {
     onClick: () => void;
     text: string;
     onLeft?: ReactNode;
   }[];
+  placement: 'bottom' | 'bottom-end';
 };
 
-const MyPopover: FC<Props> = ({ button, items }) => {
+const MyPopover: FC<Props> = ({ button, items, className, placement }) => {
   return (
-    <Popover className="relative">
+    <Popover className={cn('relative', className)}>
       {({ close }) => (
         <Float
-          placement="bottom-end"
+          placement={placement}
           offset={10}
           shift
           enter="transition duration-200 ease-out"
