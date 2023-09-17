@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
 import { TRPCError } from '@trpc/server';
-import { snapshotToArray } from '~/lib/helpers/firebase';
+import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
 
@@ -16,13 +16,27 @@ const categorySchema = z.object({
   updatedAt: z.date(),
 });
 
-type Category = z.infer<typeof categorySchema>;
+export type Category = z.infer<typeof categorySchema>;
 
 const createCategorySchema = getCreateSchema(categorySchema);
 
 const updateCategorySchema = getUpdateSchema(categorySchema);
 
 export const categoryRouter = router({
+  get: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const { id } = input;
+
+      const [categorySnapshot, error] = await tryCatch(
+        db.collection(collections.categories).doc(id).get()
+      );
+
+      if (error || !categorySnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      return formatDocument<Category>(categorySnapshot);
+    }),
   getMany: privateProcedure
     .input(z.object({ blogId: z.string() }))
     .query(async ({ input }) => {
