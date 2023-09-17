@@ -3,9 +3,18 @@ import FormikInput from '../formik-input';
 import FormikDate from '../formik-date';
 import FormikTextarea from '../formik-textarea';
 import { useField } from 'formik';
+import FormikChoose from '../formik-choose';
+import { trpc } from '~/lib/trpc';
+import { useBlog } from '~/store';
 
 const PostSettings: FC = () => {
   const [{ value: title }] = useField<string>('title');
+  const { selectedBlog } = useBlog();
+  const { data: categories } = trpc.category.getMany.useQuery(
+    { blogId: selectedBlog?.id ?? '' },
+    { enabled: !!selectedBlog }
+  );
+
   return (
     <div className="flex w-full flex-col gap-y-4">
       <FormikInput
@@ -16,6 +25,14 @@ const PostSettings: FC = () => {
         help={`If no URL title is provided we will use /${title
           .toLowerCase()
           .replaceAll(' ', '-')}`}
+      />
+      <FormikChoose
+        label="Categories"
+        name="categories"
+        options={categories?.map((category) => ({
+          text: category.name,
+          value: category.name,
+        }))}
       />
       <FormikInput
         name="SEOTitle"
@@ -29,6 +46,7 @@ const PostSettings: FC = () => {
         placeholder="Just a brief description of your blog post..."
         rows={4}
       />
+
       <FormikDate name="publishedAt" label="Publish Date" />
     </div>
   );
