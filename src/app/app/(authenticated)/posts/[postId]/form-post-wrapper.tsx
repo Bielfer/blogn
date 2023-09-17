@@ -2,6 +2,7 @@
 import type { FC } from 'react';
 import FormPost from '~/components/forms/form-post';
 import LoadingWrapper from '~/components/loading-wrapper';
+import Spinner from '~/components/spinner';
 import { trpc } from '~/lib/trpc';
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
 };
 
 const FormPostWrapper: FC<Props> = ({ postId }) => {
-  const { data, isLoading } = trpc.post.get.useQuery(
+  const { data: post, isLoading } = trpc.post.get.useQuery(
     { id: postId },
     {
       staleTime: 0,
@@ -17,9 +18,11 @@ const FormPostWrapper: FC<Props> = ({ postId }) => {
     }
   );
 
+  if (!post) return <Spinner page size="lg" />;
+
   return (
     <LoadingWrapper isLoading={isLoading} page>
-      <FormPost post={data} />
+      <FormPost post={post} />
     </LoadingWrapper>
   );
 };
