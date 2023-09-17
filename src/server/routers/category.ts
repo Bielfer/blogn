@@ -1,0 +1,85 @@
+import { router, privateProcedure } from '~/server/trpc';
+import { z } from 'zod';
+import { db } from '~/services/firebase/admin';
+import { collections } from '~/lib/constants/firebase';
+import { TRPCError } from '@trpc/server';
+import { snapshotToArray } from '~/lib/helpers/firebase';
+import { tryCatch } from '~/lib/helpers/try-catch';
+import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
+
+const categorySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  blogId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+type Category = z.infer<typeof categorySchema>;
+
+const createCategorySchema = getCreateSchema(categorySchema);
+
+const updateCategorySchema = getUpdateSchema(categorySchema);
+
+export const categoryRouter = router({
+  getMany: privateProcedure
+    .input(z.object({ blogId: z.string() }))
+    .query(async ({ input }) => {
+      const { blogId } = input;
+
+      const [categoriesSnapshot, error] = await tryCatch(
+        db
+          .collection(collections.categories)
+          .where('blogId', '==', blogId)
+          .orderBy('name', 'asc')
+          .get()
+      );
+
+      if (error || !categoriesSnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      const categories = snapshotToArray<Category>(categoriesSnapshot);
+
+      return categories;
+    }),
+  create: privateProcedure
+    .input(createCategorySchema)
+    .mutation(async ({ input }) => {
+      const [, error] = await tryCatch(
+        db.collection(collections.categories).add(input)
+      );
+
+      if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      return { message: 'Category created' };
+    }),
+  update: privateProcedure
+    .input(updateCategorySchema)
+    .mutation(async ({ input }) => {
+      const { id, ...inputWithoutId } = input;
+
+      const [, error] = await tryCatch(
+        db.collection(collections.categories).doc(id).update(inputWithoutId)
+      );
+
+      if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      return { message: 'Category updated' };
+    }),
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      const { id } = input;
+
+      const [, error] = await tryCatch(
+        db.collection(collections.categories).doc(id).delete()
+      );
+
+      if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      return { message: 'Category deleted' };
+    }),
+});
+
+export type UserCategoryRouter = typeof categoryRouter;
