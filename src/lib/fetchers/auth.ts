@@ -31,5 +31,9 @@ export const getUser = async () => {
 
   if (!user || error) return redirect(routes.appSignIn);
 
-  return user;
+  return {
+    uid: user.uid,
+    ...(!!user.displayName && { displayName: user.displayName }),
+    ...(!!user.photoURL && { photoURL: user.displayName }),
+  };
 };
