@@ -31,17 +31,5 @@ export const getUser = async () => {
 
   if (!user || error) return redirect(routes.appSignIn);
 
-  const customClaims = user.customClaims ?? {};
-  const { blogs, selectedBlog } = customClaims ?? {};
-
-  return {
-    uid: user.uid,
-    photoURL: user.photoURL,
-    customClaims: {
-      ...customClaims,
-      blogs: (blogs ?? []) as string[],
-      selectedBlog: (selectedBlog ?? null) as string | null,
-    },
-    displayName: user.displayName,
-  };
+  return user;
 };
