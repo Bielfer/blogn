@@ -28,7 +28,7 @@ import {
   HiOutlineHome,
   HiOutlineRocketLaunch,
 } from 'react-icons/hi2';
-import { useToast, useUser } from '~/store';
+import { useBlog, useToast, useUser } from '~/store';
 import UserButton from '~/components/user-button';
 import { postStatus } from '~/lib/constants/posts';
 import { type Post } from '~/server/routers/post';
@@ -44,10 +44,16 @@ const FormPost: FC<Props> = ({ post }) => {
   const router = useRouter();
   const { addToast } = useToast();
   const { user } = useUser();
+  const { selectedBlog } = useBlog();
+  const { data: categories } = trpc.category.getMany.useQuery(
+    { blogId: selectedBlog?.id ?? '' },
+    { enabled: !!selectedBlog }
+  );
   const { mutateAsync: updatePost } = trpc.post.update.useMutation();
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSavingForm, setIsSavingForm] = useState<boolean>();
+  const { mutateAsync: createCategory } = trpc.category.create.useMutation();
 
   const isUpdatingPost = post.status === postStatus.published;
 
@@ -76,15 +82,27 @@ const FormPost: FC<Props> = ({ post }) => {
   ];
 
   const handleSubmit = async (values: Post) => {
+    const toCreateCategories = values.categories
+      .filter(
+        (category) =>
+          !categories?.find((blogCategory) => blogCategory.name === category)
+      )
+      .map((category) =>
+        createCategory({ blogId: values.blogId ?? '', name: category })
+      );
+
     const [, error] = await tryCatch(
-      updatePost({
-        ...values,
-        SEOTitle: values.SEOTitle || values.title,
-        urlTitle:
-          values.urlTitle || values.title.toLowerCase().replaceAll(' ', '-'),
-        status: postStatus.published,
-        authorUid: user?.uid,
-      })
+      Promise.all([
+        ...toCreateCategories,
+        updatePost({
+          ...values,
+          SEOTitle: values.SEOTitle || values.title,
+          urlTitle:
+            values.urlTitle || values.title.toLowerCase().replaceAll(' ', '-'),
+          status: postStatus.published,
+          authorUid: user?.uid,
+        }),
+      ])
     );
 
     if (error) {
