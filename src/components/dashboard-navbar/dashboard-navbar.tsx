@@ -37,7 +37,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                   <BlogSwitcher className="hidden sm:flex" />
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {items?.map((item) => {
-                      const current = pathname === item.href;
+                      const current = pathname.includes(item.href);
                       return (
                         <Link
                           key={item.name}
@@ -82,7 +82,7 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
             <Disclosure.Panel className="sm:hidden">
               <div className="space-y-1 pb-3 pt-2">
                 {items?.map((item) => {
-                  const current = pathname === item.href;
+                  const current = pathname.includes(item.href);
                   return (
                     <Disclosure.Button
                       key={item.name}
