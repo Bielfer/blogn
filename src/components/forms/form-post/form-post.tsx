@@ -120,7 +120,7 @@ const FormPost: FC<Props> = ({ post }) => {
           </Modal>
 
           <Navbar
-            className="fixed w-screen"
+            className="fixed z-20 w-screen bg-white"
             submitForm={submitForm}
             items={getNavbarItems({
               isSubmitting,

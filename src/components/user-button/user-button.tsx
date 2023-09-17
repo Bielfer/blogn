@@ -23,7 +23,7 @@ const UserButton: FC<Props> = ({ displayName = false }) => {
   const { mutateAsync } = trpc.auth.logout.useMutation();
 
   return (
-    <>
+    <div className="shrink-0">
       <MyPopover
         placement="bottom-end"
         button={
@@ -59,7 +59,7 @@ const UserButton: FC<Props> = ({ displayName = false }) => {
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         Cu
       </Modal>
-    </>
+    </div>
   );
 };
 
