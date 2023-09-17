@@ -1,5 +1,7 @@
 'use client';
 import type { FC } from 'react';
+import { HiOutlineTag } from 'react-icons/hi2';
+import EmptyState from '~/components/empty-state';
 import LoadingWrapper from '~/components/loading-wrapper';
 import StackedList from '~/components/stacked-list';
 import { routes } from '~/lib/constants/routes';
@@ -20,25 +22,34 @@ const StackedListWrapper: FC = () => {
 
   return (
     <LoadingWrapper isLoading={isLoading}>
-      <StackedList
-        className="mx-auto max-w-2xl px-6 py-16"
-        items={
-          categories?.map((category) => ({
-            title: category.name,
-            subtitle: category.description,
-            options: [
-              { name: 'Edit', href: routes.appCategoriesEdit(category.id) },
-              {
-                name: 'Delete',
-                action: async () => {
-                  await deleteCategory({ id: category.id });
-                  await refetch();
+      {!!categories && categories.length > 0 ? (
+        <StackedList
+          className="mx-auto max-w-2xl px-6 py-16"
+          items={
+            categories?.map((category) => ({
+              title: category.name,
+              subtitle: category.description,
+              options: [
+                { name: 'Edit', href: routes.appCategoriesEdit(category.id) },
+                {
+                  name: 'Delete',
+                  action: async () => {
+                    await deleteCategory({ id: category.id });
+                    await refetch();
+                  },
                 },
-              },
-            ],
-          })) ?? []
-        }
-      />
+              ],
+            })) ?? []
+          }
+        />
+      ) : (
+        <EmptyState
+          className="py-16"
+          icon={HiOutlineTag}
+          title="You don't have any categories yet"
+          subtitle="To create a new one you just have to click on the button above"
+        />
+      )}
     </LoadingWrapper>
   );
 };
