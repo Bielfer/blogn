@@ -33,7 +33,11 @@ const FormikImagePreview: FC<Props> = ({
 
   return !!imageUrl ? (
     <div className={cn('overflow-hidden', className)}>
-      <img className="object-contain" src={imageUrl} alt="Image preview" />
+      <img
+        className="h-full w-full object-contain"
+        src={imageUrl}
+        alt="Image preview"
+      />
     </div>
   ) : (
     noImageChosen
