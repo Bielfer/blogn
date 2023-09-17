@@ -2,18 +2,16 @@ import { router, privateProcedure } from '~/server/trpc';
 import { z } from 'zod';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { TRPCError } from '@trpc/server';
-import { db } from '~/services/firebase/admin';
+import { auth, db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
-import {
-  conditionalWheres,
-  formatDocument,
-  snapshotToArray,
-} from '~/lib/helpers/firebase';
+import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
 import { postStatusValues } from '~/lib/constants/posts';
 import { getPostById } from '~/lib/fetchers/post';
+import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
 
 const postSchema = z.object({
   id: z.string(),
+  blogId: z.string(),
   content: z.object({
     version: z.string().optional(),
     blocks: z.any().array(),
@@ -24,16 +22,16 @@ const postSchema = z.object({
   SEOTitle: z.string(),
   SEODescription: z.string(),
   status: z.enum(postStatusValues),
+  authorUid: z.string(),
   publishedAt: z.date(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
-export const setPostSchema = postSchema
-  .omit({ createdAt: true, updatedAt: true })
-  .extend({ id: z.string().optional() });
-
 export type Post = z.infer<typeof postSchema>;
+
+export const createPostSchema = getCreateSchema(postSchema);
+export const updatePostSchema = getUpdateSchema(postSchema);
 
 export const postRouter = router({
   get: privateProcedure
@@ -50,23 +48,30 @@ export const postRouter = router({
       if (error || !postSnapshot)
         throw new TRPCError({ code: 'BAD_REQUEST', message: error });
 
-      return formatDocument<Post>(postSnapshot);
+      const post = formatDocument<Post>(postSnapshot);
+
+      const [author, errorGettingAuthor] = await tryCatch(
+        auth.getUser(post.authorUid)
+      );
+
+      if (errorGettingAuthor || !author)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: errorGettingAuthor });
+
+      return { ...post, author };
     }),
   getMany: privateProcedure
     .input(
       z.object({
-        uid: z.string().optional(),
-        organizationId: z.string().optional(),
+        blogId: z.string(),
       })
     )
     .query(async ({ input }) => {
-      const { organizationId, uid } = input;
+      const { blogId } = input;
 
       const [postsSnapshot, error] = await tryCatch(
-        conditionalWheres(db.collection(collections.posts), [
-          ['organizationId', '==', organizationId],
-          ['uid', '==', uid],
-        ])
+        db
+          .collection(collections.posts)
+          .where('blogId', '==', blogId)
           .orderBy('publishedAt', 'desc')
           .get()
       );
@@ -76,33 +81,55 @@ export const postRouter = router({
 
       const posts = snapshotToArray<Post>(postsSnapshot);
 
-      return posts;
-    }),
-  set: privateProcedure
-    .input(setPostSchema)
-    .mutation(async ({ input, ctx }) => {
-      const { uid } = ctx.decodedIdToken;
-      const { id, ...filteredInput } = input;
-
-      const postRef = !!id
-        ? db.collection(collections.posts).doc(id)
-        : db.collection(collections.posts).doc();
-
-      const [, error] = await tryCatch(
-        postRef.set({
-          ...filteredInput,
-          uid,
-        })
+      const authorsUid = [...new Set(posts.map((post) => post.authorUid))].map(
+        (uid) => ({ uid })
       );
 
-      if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+      const [authors, errorGettingAuthors] = await tryCatch(
+        auth.getUsers(authorsUid)
+      );
 
-      const [postSnapshot, errorGettingPost] = await tryCatch(postRef.get());
+      if (errorGettingAuthors || !authors)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          cause: errorGettingAuthors,
+        });
 
-      if (!postSnapshot || errorGettingPost)
-        throw new TRPCError({ code: 'BAD_REQUEST', message: errorGettingPost });
+      return posts.map((post) => ({
+        ...post,
+        author: authors.users.find((user) => user.uid === post.authorUid),
+      }));
+    }),
+  create: privateProcedure
+    .input(createPostSchema)
+    .mutation(async ({ input }) => {
+      const [postRef, error] = await tryCatch(
+        db.collection(collections.posts).add(input)
+      );
 
-      return formatDocument<Post>(postSnapshot);
+      if (error || !postRef)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
+
+      const [post, errorGettingPost] = await tryCatch(postRef.get());
+
+      if (errorGettingPost || !post)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: errorGettingPost });
+
+      return formatDocument<Post>(post);
+    }),
+
+  update: privateProcedure
+    .input(updatePostSchema)
+    .mutation(async ({ input }) => {
+      const { id, ...inputWithoutId } = input;
+
+      const [, error] = await tryCatch(
+        db.collection(collections.posts).doc(id).update(inputWithoutId)
+      );
+
+      if (error) throw new TRPCError({ code: 'BAD_REQUEST', cause: error });
+
+      return { message: 'Post updated!' };
     }),
   delete: privateProcedure
     .input(z.object({ id: z.string() }))
