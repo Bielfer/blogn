@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server';
 import { auth, db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
 import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
-import { postStatusValues } from '~/lib/constants/posts';
+import { postStatus, postStatusValues } from '~/lib/constants/posts';
 import { getPostById } from '~/lib/fetchers/post';
 import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
 
@@ -20,10 +20,11 @@ const postSchema = z.object({
   title: z.string(),
   urlTitle: z.string(),
   SEOTitle: z.string(),
-  SEODescription: z.string(),
-  status: z.enum(postStatusValues),
+  SEODescription: z.string().default(''),
+  status: z.enum(postStatusValues).default(postStatus.draft),
   authorUid: z.string(),
-  publishedAt: z.date(),
+  publishedAt: z.date().default(new Date()),
+  categories: z.string().array().default([]),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
