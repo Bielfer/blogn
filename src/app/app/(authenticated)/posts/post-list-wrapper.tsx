@@ -9,61 +9,29 @@ import { postStatus, postStatusNames } from '~/lib/constants/posts';
 import { publicImagesHref } from '~/lib/constants/public';
 import { routes } from '~/lib/constants/routes';
 import { trpc } from '~/lib/trpc';
-import { useUser } from '~/store';
+import { useBlog } from '~/store';
 
 const PostListWrapper: FC = () => {
-  const { user } = useUser();
+  const { selectedBlog } = useBlog();
   const { data: posts, isLoading } = trpc.post.getMany.useQuery(
-    { uid: user?.uid },
-    { enabled: !!user?.uid }
+    { blogId: selectedBlog?.id ?? '' },
+    { enabled: !!selectedBlog }
   );
 
   const formattedPosts =
     posts?.map((post) => ({
       id: post.id,
-      title: post.title,
+      title: post.title || 'No title created',
       href: routes.appPostEdit(post.id),
-      description: post.SEODescription || 'No description provided',
+      description: post.SEODescription || 'No description created',
       date: format(post.publishedAt, 'MMM d, yyyy'),
       datetime: format(post.publishedAt, 'yyyy-MM-dd'),
       author: {
-        name: user?.displayName ?? 'No name provided',
+        name: post.author?.displayName ?? 'No name provided',
         role: '',
-        imageUrl: user?.photoURL ?? publicImagesHref.userIcon,
+        imageUrl: post.author?.photoURL ?? publicImagesHref.userIcon,
       },
       badges: [
-        {
-          text: postStatusNames[post.status],
-          color:
-            post.status === postStatus.published
-              ? ('green' as const)
-              : ('yellow' as const),
-          pill: true,
-        },
-        {
-          text: postStatusNames[post.status],
-          color:
-            post.status === postStatus.published
-              ? ('green' as const)
-              : ('yellow' as const),
-          pill: true,
-        },
-        {
-          text: postStatusNames[post.status],
-          color:
-            post.status === postStatus.published
-              ? ('green' as const)
-              : ('yellow' as const),
-          pill: true,
-        },
-        {
-          text: postStatusNames[post.status],
-          color:
-            post.status === postStatus.published
-              ? ('green' as const)
-              : ('yellow' as const),
-          pill: true,
-        },
         {
           text: postStatusNames[post.status],
           color:
