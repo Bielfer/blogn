@@ -7,7 +7,15 @@ import Button from '~/components/button';
 import EmptyState from '~/components/empty-state';
 import { HiMiniArrowUturnLeft, HiOutlinePencilSquare } from 'react-icons/hi2';
 
-const toHtml = editorJsHtml();
+const toHtml = editorJsHtml({
+  delimiter: () => (
+    <div className="flex items-center justify-center gap-x-1">
+      <span className="text-lg">*</span>
+      <span className="text-lg">*</span>
+      <span className="text-lg">*</span>
+    </div>
+  ),
+});
 
 type Props = {
   handleClose: () => void;
@@ -29,10 +37,10 @@ const PostPreview: FC<Props> = ({ handleClose }) => {
           Go Back
         </Button>
       </Container>
-      <Container smallerContainer>
+      <Container smallerContainer className="prose">
         <h1 className="py-8">{title}</h1>
         {postHasContent ? (
-          <div className="prose max-w-full" key={data.time}>
+          <div className="max-w-full" key={data.time}>
             {html?.map((item, index) => {
               if (typeof item === 'string') {
                 return (
