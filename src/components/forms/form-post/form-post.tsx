@@ -28,7 +28,7 @@ import {
   HiOutlineHome,
   HiOutlineRocketLaunch,
 } from 'react-icons/hi2';
-import { useToast } from '~/store';
+import { useToast, useUser } from '~/store';
 import UserButton from '~/components/user-button';
 import { postStatus } from '~/lib/constants/posts';
 import { type Post } from '~/server/routers/post';
@@ -36,29 +36,20 @@ import SavingIndicator from './saving-indicator';
 
 const Editor = dynamic(() => import('../../editor'), { ssr: false });
 
-export const initialValues = {
-  title: '',
-  content: { blocks: [] },
-  urlTitle: '',
-  SEOTitle: '',
-  SEODescription: '',
-  publishedAt: new Date(),
-  status: '',
-};
-
 type Props = {
-  post?: Post;
+  post: Post;
 };
 
 const FormPost: FC<Props> = ({ post }) => {
   const router = useRouter();
   const { addToast } = useToast();
-  const { mutateAsync: setPost } = trpc.post.set.useMutation();
+  const { user } = useUser();
+  const { mutateAsync: updatePost } = trpc.post.update.useMutation();
   const [isPostPreviewOpen, setIsPostPreviewOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSavingForm, setIsSavingForm] = useState<boolean>();
 
-  const isUpdatingPost = post?.status === postStatus.published;
+  const isUpdatingPost = post.status === postStatus.published;
 
   const getNavbarItems = ({ isSubmitting }: { isSubmitting: boolean }) => [
     {
@@ -84,14 +75,15 @@ const FormPost: FC<Props> = ({ post }) => {
     },
   ];
 
-  const handleSubmit = async (values: typeof initialValues) => {
+  const handleSubmit = async (values: Post) => {
     const [, error] = await tryCatch(
-      setPost({
+      updatePost({
         ...values,
         SEOTitle: values.SEOTitle || values.title,
         urlTitle:
           values.urlTitle || values.title.toLowerCase().replaceAll(' ', '-'),
         status: postStatus.published,
+        authorUid: user?.uid,
       })
     );
 
@@ -107,12 +99,7 @@ const FormPost: FC<Props> = ({ post }) => {
   };
 
   return (
-    <Formik
-      initialValues={
-        !!post ? (post as unknown as typeof initialValues) : initialValues
-      }
-      onSubmit={handleSubmit}
-    >
+    <Formik initialValues={post} onSubmit={handleSubmit}>
       {({ isSubmitting, submitForm }) => (
         <Form>
           <SaveForm setIsSavingForm={setIsSavingForm} post={post} />
@@ -174,12 +161,13 @@ const FormPost: FC<Props> = ({ post }) => {
 };
 
 const SaveForm: FC<{
-  post?: Post;
+  post: Post;
   setIsSavingForm: Dispatch<SetStateAction<boolean | undefined>>;
 }> = ({ setIsSavingForm, post }) => {
   const { addToast } = useToast();
-  const { mutateAsync: setPost } = trpc.post.set.useMutation();
-  const { values } = useFormikContext<typeof initialValues>();
+  const { user } = useUser();
+  const { mutateAsync: updatePost } = trpc.post.update.useMutation();
+  const { values } = useFormikContext<Post>();
 
   const updateForm = useCallback(async () => {
     if (post?.status === postStatus.published) return;
@@ -187,9 +175,10 @@ const SaveForm: FC<{
     setIsSavingForm(true);
 
     const [, error] = await tryCatch(
-      setPost({
+      updatePost({
         ...values,
         status: postStatus.draft,
+        authorUid: user?.uid,
       })
     );
 
@@ -202,7 +191,7 @@ const SaveForm: FC<{
       });
 
     setIsSavingForm(false);
-  }, [setPost, values, addToast, setIsSavingForm, post]);
+  }, [updatePost, values, addToast, setIsSavingForm, post, user]);
 
   const [, cancel, reset] = useTimeoutFn(updateForm, 1500);
 
