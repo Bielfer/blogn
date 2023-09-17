@@ -13,6 +13,7 @@ import Button from '~/components/button';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { bucketPaths } from '~/lib/constants/firebase';
 import { uploadFile } from '~/lib/helpers/firebase';
+import { keyPicker } from '~/lib/helpers/object';
 
 const FormUser: FC = () => {
   const { user, setUser } = useUser();
@@ -33,7 +34,6 @@ const FormUser: FC = () => {
 
   const handleSubmit = async (values: z.infer<typeof validationSchema>) => {
     const { photoFile, photoURL, ...filteredValues } = values;
-
     let error: any,
       res: { url: string } | null = null;
 
@@ -62,7 +62,7 @@ const FormUser: FC = () => {
       return;
     }
 
-    setUser(updatedUser);
+    setUser(keyPicker(updatedUser, ['displayName', 'uid', 'photoURL']));
     addToast({ type: 'success', content: 'Profile updated' });
   };
 
