@@ -30,6 +30,8 @@ const BlogSwitcher: FC<Props> = ({ className }) => {
       </div>
     );
 
+  const filteredBlogs = blogs.filter((blog) => blog.id !== selectedBlog?.id);
+
   return (
     <div className={cn('flex items-center gap-x-3', className)}>
       <div className="hidden px-5 text-2xl font-light text-gray-200 sm:block">
@@ -44,7 +46,7 @@ const BlogSwitcher: FC<Props> = ({ className }) => {
           </div>
         }
         items={[
-          ...(blogs?.map((blog) => ({
+          ...(filteredBlogs?.map((blog) => ({
             text: blog.name,
             onClick: () => setSelectedBlog(blog),
             onLeft: (
