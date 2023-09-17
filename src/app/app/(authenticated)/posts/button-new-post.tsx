@@ -43,6 +43,7 @@ const ButtonNewPost: FC = () => {
         title: '',
         urlTitle: '',
         authorUid: user.uid,
+        categories: [],
       })
     );
 
