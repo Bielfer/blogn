@@ -11,6 +11,7 @@ import { trpc } from '~/lib/trpc';
 import { useRouter } from 'next/navigation';
 import { routes } from '~/lib/constants/routes';
 import MyPopover from '../my-popover';
+import FormUser from '../forms/form-user';
 
 type Props = {
   displayName?: boolean;
@@ -27,11 +28,11 @@ const UserButton: FC<Props> = ({ displayName = false }) => {
       <MyPopover
         placement="bottom-end"
         button={
-          <div className="flex items-center gap-x-2">
+          <div className="flex h-8 w-8 items-center justify-center gap-x-2 overflow-hidden rounded-full">
             <img
               src={user?.photoURL ?? publicImagesHref.userIcon}
               alt="User profile photo"
-              className="h-8 w-8 rounded-full"
+              className="object-contain"
             />
             {displayName && (
               <span className="text-sm font-medium">
@@ -56,8 +57,12 @@ const UserButton: FC<Props> = ({ displayName = false }) => {
           },
         ]}
       />
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        Cu
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        className="w-full max-w-md"
+      >
+        <FormUser />
       </Modal>
     </div>
   );
