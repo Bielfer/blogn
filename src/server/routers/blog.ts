@@ -5,13 +5,18 @@ import { tryCatch } from '~/lib/helpers/try-catch';
 import { db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
 import { TRPCError } from '@trpc/server';
-import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
+import {
+  conditionalWheres,
+  formatDocument,
+  snapshotToArray,
+} from '~/lib/helpers/firebase';
 import { isBlogOwner } from '../middlewares';
 
 const blogSchema = z.object({
   id: z.string(),
   name: z.string(),
   photoUrl: z.string().optional(),
+  subdomain: z.string(),
   ownerUid: z.string(),
   editors: z.string().array(),
   links: z.record(z.string()).optional(),
@@ -41,12 +46,20 @@ export const blogRouter = router({
       return formatDocument<Blog>(blogSnapshot);
     }),
   getMany: privateProcedure
-    .input(z.object({ ownerUid: z.string() }))
+    .input(
+      z.object({
+        ownerUid: z.string().optional(),
+        subdomain: z.string().optional(),
+      })
+    )
     .query(async ({ input }) => {
-      const { ownerUid } = input;
+      const { ownerUid, subdomain } = input;
 
       const [blogSnapshot, error] = await tryCatch(
-        db.collection(collections.blogs).where('ownerUid', '==', ownerUid).get()
+        conditionalWheres(db.collection(collections.blogs), [
+          ['ownerUid', '==', ownerUid],
+          ['subdomain', '==', subdomain],
+        ]).get()
       );
 
       if (error || !blogSnapshot)
@@ -58,6 +71,20 @@ export const blogRouter = router({
     .input(createBlogSchema)
     .mutation(async ({ input, ctx }) => {
       const { uid } = ctx.decodedIdToken;
+
+      const [blogsSnapshot, errorFindingBlogs] = await tryCatch(
+        db
+          .collection(collections.blogs)
+          .where('subdomain', '==', input.subdomain)
+          .count()
+          .get()
+      );
+
+      if (errorFindingBlogs || !blogsSnapshot || blogsSnapshot.data().count > 0)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Subdomain not available',
+        });
 
       const [blogRef, error] = await tryCatch(
         db.collection(collections.blogs).add({ ...input, ownerUid: uid })
