@@ -13,7 +13,7 @@ const FormBlogWrapper: FC = () => {
   const context = trpc.useContext();
   const { data: blog, isLoading } = trpc.blog.get.useQuery(
     { id: selectedBlog?.id ?? '' },
-    { enabled: !!selectedBlog }
+    { enabled: !!selectedBlog, staleTime: 0, cacheTime: 0 }
   );
 
   return (
