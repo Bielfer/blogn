@@ -20,6 +20,7 @@ interface Props {
   type?: 'text' | 'password';
   help?: string;
   leftAddOn?: string;
+  rightAddOn?: string;
 }
 
 const FormikInput: FC<Props> = ({
@@ -34,6 +35,7 @@ const FormikInput: FC<Props> = ({
   type,
   help,
   leftAddOn,
+  rightAddOn,
 }) => {
   const [{ value }, { error, touched }, { setValue }] = useField<string>(name);
   const [formattedValue, setFormattedValue] = useState('');
@@ -118,6 +120,7 @@ const FormikInput: FC<Props> = ({
       type={type}
       help={help}
       leftAddOn={leftAddOn}
+      rightAddOn={rightAddOn}
     />
   );
 };

@@ -17,6 +17,7 @@ interface Props {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   help?: string;
   leftAddOn?: string;
+  rightAddOn?: string;
 }
 
 const Input: FC<Props> = ({
@@ -33,6 +34,7 @@ const Input: FC<Props> = ({
   onChange,
   help,
   leftAddOn,
+  rightAddOn,
 }) => (
   <InputLayout
     name={name}
@@ -51,7 +53,7 @@ const Input: FC<Props> = ({
       )}
     >
       {!!leftAddOn && (
-        <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
+        <span className="flex select-none items-center border-r border-gray-300 bg-gray-100 px-3 text-gray-500 sm:text-sm">
           {leftAddOn}
         </span>
       )}
@@ -67,6 +69,11 @@ const Input: FC<Props> = ({
         id={name}
         disabled={disabled}
       />
+      {!!rightAddOn && (
+        <span className="flex select-none items-center border-l border-gray-300 bg-gray-100 px-3 text-gray-500 sm:text-sm">
+          {rightAddOn}
+        </span>
+      )}
     </div>
   </InputLayout>
 );
