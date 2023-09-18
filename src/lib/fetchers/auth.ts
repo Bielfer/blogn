@@ -34,6 +34,6 @@ export const getUser = async () => {
   return {
     uid: user.uid,
     ...(!!user.displayName && { displayName: user.displayName }),
-    ...(!!user.photoURL && { photoURL: user.displayName }),
+    ...(!!user.photoURL && { photoURL: user.photoURL }),
   };
 };
