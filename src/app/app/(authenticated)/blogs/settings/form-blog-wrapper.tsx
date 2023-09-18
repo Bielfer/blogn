@@ -11,13 +11,13 @@ const FormBlogWrapper: FC = () => {
   const { addToast } = useToast();
   const { selectedBlog } = useBlog();
   const context = trpc.useContext();
-  const { data: blog, isFetching } = trpc.blog.get.useQuery(
+  const { data: blog, isLoading } = trpc.blog.get.useQuery(
     { id: selectedBlog?.id ?? '' },
     { enabled: !!selectedBlog }
   );
 
   return (
-    <LoadingWrapper isLoading={isFetching}>
+    <LoadingWrapper isLoading={isLoading}>
       <FormBlog
         className="mx-auto max-w-md pb-20 pt-6"
         title="Update your blog"
