@@ -25,7 +25,7 @@ const BlogSwitcher: FC<Props> = ({ className }) => {
 
   if (!blogs)
     return (
-      <div className="flex items-center">
+      <div className={cn('flex items-center', className)}>
         <Spinner size="sm" />
       </div>
     );
