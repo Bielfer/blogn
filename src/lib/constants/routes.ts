@@ -7,6 +7,7 @@ export const routes = {
   appBlogsNew: '/blogs/new',
   appBlogsNewFirst: '/blogs/new/first',
   appBlogsSettings: '/blogs/settings',
+  appBlogsSettingsDomains: '/blogs/settings/domains',
   appCategories: '/categories',
   appCategoriesNew: '/categories/new',
   appCategoriesEdit: (categoryId: string) => `/categories/${categoryId}`,
@@ -17,3 +18,8 @@ export const dashboardRoutes = [
   { name: 'Categories', href: routes.appCategories },
   { name: 'Settings', href: routes.appBlogsSettings },
 ] as const;
+
+export const settingsRoutes = [
+  { name: 'General', href: routes.appBlogsSettings },
+  { name: 'Domains', href: routes.appBlogsSettingsDomains },
+];
