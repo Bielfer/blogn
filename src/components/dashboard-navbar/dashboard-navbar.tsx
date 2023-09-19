@@ -9,6 +9,7 @@ import Container from '../container';
 import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
 import UserButton from '../user-button';
 import BlogSwitcher from '../blog-switcher';
+import cn from '~/lib/helpers/cn';
 
 export type Item = {
   name: string;
@@ -84,26 +85,28 @@ const DashboardNavbar: FC<Props> = ({ children, items }) => {
                 {items?.map((item) => {
                   const current = pathname.includes(item.href);
                   return (
-                    <Disclosure.Button
-                      key={item.name}
-                      as="a"
+                    <Link
                       href={item.href}
-                      className={clsx(
+                      key={item.name}
+                      className={cn(
                         current
                           ? 'border-primary-500 bg-primary-50 text-primary-700'
                           : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
                         'block border-l-4 py-2 pl-3 pr-4 text-base font-medium'
                       )}
-                      aria-current={current ? 'page' : undefined}
                     >
-                      {item.name}
-                    </Disclosure.Button>
+                      <Disclosure.Button
+                        aria-current={current ? 'page' : undefined}
+                      >
+                        {item.name}
+                      </Disclosure.Button>
+                    </Link>
                   );
                 })}
               </div>
-              <div className="flex flex-col justify-center gap-x-2 gap-y-3 border-t border-gray-200 p-4">
+              <div className="flex justify-between gap-x-2 gap-y-3 border-t border-gray-200 p-4">
                 <BlogSwitcher />
-                <UserButton displayName />
+                <UserButton />
               </div>
             </Disclosure.Panel>
           </>
