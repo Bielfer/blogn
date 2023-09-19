@@ -1,5 +1,5 @@
 /* eslint react/jsx-no-useless-fragment:off */
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 interface Props {
   condition: boolean;
