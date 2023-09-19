@@ -1,4 +1,5 @@
 import { type FC, type ReactNode } from 'react';
+import cn from '~/lib/helpers/cn';
 
 type Props = {
   className?: string;
@@ -16,7 +17,7 @@ const DescriptionList: FC<Props> = ({
   onRight,
 }) => {
   return (
-    <div className={className}>
+    <div className={cn('max-w-full overflow-hidden', className)}>
       {(!!title || !!subtitle) && (
         <div className="flex items-center justify-between">
           <div className="px-4 sm:px-0">
@@ -34,7 +35,7 @@ const DescriptionList: FC<Props> = ({
         <dl className="divide-y divide-gray-100">
           {items.map((item) => (
             <div
-              className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+              className="overflow-x-auto px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
               key={item.name}
             >
               <dt className="text-sm font-medium leading-6 text-gray-900">
