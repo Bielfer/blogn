@@ -1,7 +1,5 @@
 import { type Metadata } from 'next';
 import { type FC } from 'react';
-import DashboardNavbar from '~/components/dashboard-navbar';
-import { dashboardRoutes } from '~/lib/constants/routes';
 import FormBlogWrapper from './form-blog-wrapper';
 
 export const metadata: Metadata = {
@@ -9,11 +7,7 @@ export const metadata: Metadata = {
 };
 
 const NewBlog: FC = () => {
-  return (
-    <DashboardNavbar items={dashboardRoutes}>
-      <FormBlogWrapper />
-    </DashboardNavbar>
-  );
+  return <FormBlogWrapper />;
 };
 
 export default NewBlog;

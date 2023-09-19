@@ -1,8 +1,6 @@
 import { type Metadata } from 'next';
 import { type FC } from 'react';
-import DashboardNavbar from '~/components/dashboard-navbar';
 import FormCategory from '~/components/forms/form-category';
-import { dashboardRoutes } from '~/lib/constants/routes';
 
 export const metadata: Metadata = {
   title: 'Create a new category',
@@ -10,11 +8,7 @@ export const metadata: Metadata = {
 };
 
 const NewCategoryPage: FC = () => {
-  return (
-    <DashboardNavbar items={dashboardRoutes}>
-      <FormCategory className="mx-auto max-w-md py-12" />
-    </DashboardNavbar>
-  );
+  return <FormCategory className="mx-auto max-w-md py-12" />;
 };
 
 export default NewCategoryPage;
