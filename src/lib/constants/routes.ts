@@ -8,6 +8,7 @@ export const routes = {
   appBlogsNewFirst: '/blogs/new/first',
   appBlogsSettings: '/blogs/settings',
   appBlogsSettingsDomains: '/blogs/settings/domains',
+  appBlogsSettingsDomainsEdit: '/blogs/settings/domains/edit',
   appCategories: '/categories',
   appCategoriesNew: '/categories/new',
   appCategoriesEdit: (categoryId: string) => `/categories/${categoryId}`,
