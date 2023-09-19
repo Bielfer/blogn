@@ -5,6 +5,7 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']),
     FIREBASE_SERVICE_ACCOUNT: z.string().min(1),
+    VERCEL_TOKEN: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_API_KEY: z.string().min(1),
@@ -26,6 +27,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_ID: process.env.NEXT_PUBLIC_APP_ID,
     FIREBASE_SERVICE_ACCOUNT: process.env.FIREBASE_SERVICE_ACCOUNT,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    VERCEL_TOKEN: process.env.VERCEL_TOKEN,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
