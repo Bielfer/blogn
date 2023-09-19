@@ -1,5 +1,4 @@
 'use client';
-
 import type { FC } from 'react';
 import FormBlog from '~/components/forms/form-blog';
 import LoadingWrapper from '~/components/loading-wrapper';
@@ -19,7 +18,7 @@ const FormBlogWrapper: FC = () => {
   return (
     <LoadingWrapper isLoading={isLoading}>
       <FormBlog
-        className="mx-auto max-w-md pb-20 pt-6"
+        className="mx-auto max-w-md"
         title="Update your blog"
         afterSubmit={async () => {
           addToast({ type: 'success', content: 'Blog updated' });
