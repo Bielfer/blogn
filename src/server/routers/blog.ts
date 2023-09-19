@@ -17,6 +17,7 @@ const blogSchema = z.object({
   name: z.string(),
   photoUrl: z.string().optional(),
   subdomain: z.string(),
+  domain: z.string().optional().default(''),
   ownerUid: z.string(),
   editors: z.string().array(),
   links: z.record(z.string()).optional(),
