@@ -4,6 +4,7 @@ import { postRouter } from './post';
 import { blogRouter } from './blog';
 import { categoryRouter } from './category';
 import { userRouter } from './user';
+import { vercelRouter } from './vercel';
 
 const appRouter = router({
   post: postRouter,
@@ -11,6 +12,7 @@ const appRouter = router({
   blog: blogRouter,
   category: categoryRouter,
   user: userRouter,
+  vercel: vercelRouter,
 });
 
 export type AppRouter = typeof appRouter;
