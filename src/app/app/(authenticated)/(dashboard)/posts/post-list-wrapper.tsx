@@ -13,10 +13,12 @@ import { useBlog } from '~/store';
 
 const PostListWrapper: FC = () => {
   const { selectedBlog } = useBlog();
-  const { data: posts, isLoading } = trpc.post.getMany.useQuery(
+  const { data, isLoading } = trpc.post.getMany.useQuery(
     { blogId: selectedBlog?.id ?? '' },
     { enabled: !!selectedBlog }
   );
+
+  const posts = data?.posts;
 
   const formattedPosts =
     posts?.map((post) => ({
