@@ -1,10 +1,14 @@
-import { router, privateProcedure } from '~/server/trpc';
+import { router, privateProcedure, publicProcedure } from '~/server/trpc';
 import { z } from 'zod';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { TRPCError } from '@trpc/server';
 import { auth, db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
-import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
+import {
+  conditionalWheres,
+  formatDocument,
+  snapshotToArray,
+} from '~/lib/helpers/firebase';
 import { postStatus, postStatusValues } from '~/lib/constants/posts';
 import { getPostById } from '~/lib/fetchers/post';
 import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
@@ -60,20 +64,27 @@ export const postRouter = router({
 
       return { ...post, author };
     }),
-  getMany: privateProcedure
+  getMany: publicProcedure
     .input(
       z.object({
         blogId: z.string(),
+        cursor: z.number().optional().default(1),
+        limit: z.number().min(1).max(20).optional().default(10),
+        status: z.enum(postStatusValues).optional(),
       })
     )
     .query(async ({ input }) => {
-      const { blogId } = input;
+      const { blogId, cursor, limit, status } = input;
+
+      const postRef = conditionalWheres(db.collection(collections.posts), [
+        ['blogId', '==', blogId],
+        ['status', '==', status],
+      ]).orderBy('publishedAt', 'desc');
 
       const [postsSnapshot, error] = await tryCatch(
-        db
-          .collection(collections.posts)
-          .where('blogId', '==', blogId)
-          .orderBy('publishedAt', 'desc')
+        postRef
+          .offset((cursor - 1) * limit)
+          .limit(limit)
           .get()
       );
 
@@ -96,10 +107,18 @@ export const postRouter = router({
           cause: errorGettingAuthors,
         });
 
-      return posts.map((post) => ({
-        ...post,
-        author: authors.users.find((user) => user.uid === post.authorUid),
-      }));
+      const [postCount, errorPostCount] = await tryCatch(postRef.count().get());
+
+      if (errorPostCount || !postCount)
+        throw new TRPCError({ code: 'BAD_REQUEST', cause: errorPostCount });
+
+      return {
+        posts: posts.map((post) => ({
+          ...post,
+          author: authors.users.find((user) => user.uid === post.authorUid),
+        })),
+        count: postCount.data().count,
+      };
     }),
   create: privateProcedure
     .input(createPostSchema)
