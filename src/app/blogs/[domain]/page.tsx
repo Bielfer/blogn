@@ -8,7 +8,7 @@ import TemplateDefault from '~/components/templates/default';
 import { postStatus } from '~/lib/constants/posts';
 import { publicImagesHref } from '~/lib/constants/public';
 import { routes } from '~/lib/constants/routes';
-import { getDomains, getImageContentType } from '~/lib/helpers/metadata';
+import { generateBlogMetadata, getDomains } from '~/lib/helpers/metadata';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { caller } from '~/server/routers/_app';
 
@@ -20,39 +20,12 @@ export type Props = {
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
-  const { domain, subdomain } = getDomains(params.domain);
-
-  const blogs = await caller.blog.getMany({
-    ...(!!subdomain ? { subdomain } : { domain }),
+  const metadata = await generateBlogMetadata({
+    domain: params.domain,
+    title: 'Home',
   });
 
-  const blog = blogs[0];
-  const photoUrlContentType = await getImageContentType(blog?.photoUrl ?? '');
-  const fileType = photoUrlContentType?.split('/')[1];
-
-  return {
-    title: {
-      absolute: blog?.name ?? '',
-    },
-    ...(blog?.photoUrl && {
-      icons: {
-        icon: `${blog.photoUrl}.${fileType}`,
-        shortcut: {
-          url: `${blog.photoUrl}`,
-          type: photoUrlContentType ?? '',
-        },
-        apple: {
-          url: `${blog.photoUrl}`,
-          type: photoUrlContentType ?? '',
-        },
-        other: {
-          rel: 'icon',
-          url: `${blog.photoUrl}`,
-          type: photoUrlContentType ?? '',
-        },
-      },
-    }),
-  };
+  return metadata;
 };
 
 const BlogHome: FC<Props> = async ({ searchParams, params }) => {
