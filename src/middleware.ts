@@ -26,8 +26,10 @@ export default function middleware(req: NextRequest) {
       headers: requestHeaders,
     });
 
+  const searchParams = req.nextUrl.search;
+
   return NextResponse.rewrite(
-    new URL(`/blogs/${hostname}${pathname}`, req.url),
+    new URL(`/blogs/${hostname}${pathname}${searchParams}`, req.url),
     {
       headers: requestHeaders,
     }
