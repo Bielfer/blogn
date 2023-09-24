@@ -1,4 +1,4 @@
-import { router, privateProcedure } from '~/server/trpc';
+import { router, privateProcedure, publicProcedure } from '~/server/trpc';
 import { z } from 'zod';
 import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
 import { tryCatch } from '~/lib/helpers/try-catch';
@@ -16,6 +16,7 @@ const blogSchema = z.object({
   id: z.string(),
   name: z.string(),
   photoUrl: z.string().optional(),
+  bannerUrl: z.string().optional(),
   subdomain: z.string(),
   domain: z.string().optional().default(''),
   ownerUid: z.string(),
@@ -46,20 +47,22 @@ export const blogRouter = router({
 
       return formatDocument<Blog>(blogSnapshot);
     }),
-  getMany: privateProcedure
+  getMany: publicProcedure
     .input(
       z.object({
         ownerUid: z.string().optional(),
         subdomain: z.string().optional(),
+        domain: z.string().optional(),
       })
     )
     .query(async ({ input }) => {
-      const { ownerUid, subdomain } = input;
+      const { ownerUid, subdomain, domain } = input;
 
       const [blogSnapshot, error] = await tryCatch(
         conditionalWheres(db.collection(collections.blogs), [
           ['ownerUid', '==', ownerUid],
           ['subdomain', '==', subdomain],
+          ['domain', '==', domain],
         ]).get()
       );
 
