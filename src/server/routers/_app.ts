@@ -17,4 +17,6 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
+export const caller = appRouter.createCaller({ decodedIdToken: null });
+
 export default appRouter;
