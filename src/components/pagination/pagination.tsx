@@ -32,16 +32,22 @@ const Pagination: FC<Props> = ({ count, limit, page, className }) => {
       )}
     >
       <div className="-mt-px flex w-0 flex-1">
-        <a
-          href="#"
-          className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-        >
-          <HiMiniArrowLongLeft
-            className="mr-3 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-          Previous
-        </a>
+        {page > 1 && (
+          <Link
+            href={{
+              query: {
+                page: page - 1,
+              },
+            }}
+            className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+          >
+            <HiMiniArrowLongLeft
+              className="mr-3 h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+            Previous
+          </Link>
+        )}
       </div>
       <div className="hidden md:-mt-px md:flex">
         {firstPages.map((pageNumber) => (
@@ -83,16 +89,22 @@ const Pagination: FC<Props> = ({ count, limit, page, className }) => {
         ))}
       </div>
       <div className="-mt-px flex w-0 flex-1 justify-end">
-        <a
-          href="#"
-          className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-        >
-          Next
-          <HiMiniArrowLongRight
-            className="ml-3 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-        </a>
+        {page < pageAmount && (
+          <Link
+            href={{
+              query: {
+                page: page + 1,
+              },
+            }}
+            className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+          >
+            Next
+            <HiMiniArrowLongRight
+              className="ml-3 h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </Link>
+        )}
       </div>
     </nav>
   );
