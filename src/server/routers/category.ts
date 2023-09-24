@@ -1,4 +1,4 @@
-import { router, privateProcedure } from '~/server/trpc';
+import { router, privateProcedure, publicProcedure } from '~/server/trpc';
 import { z } from 'zod';
 import { db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
@@ -6,10 +6,12 @@ import { TRPCError } from '@trpc/server';
 import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
+import { toUrlFormat } from '~/lib/helpers/string';
 
 const categorySchema = z.object({
   id: z.string(),
   name: z.string(),
+  url: z.string().default(''),
   description: z.string().optional(),
   blogId: z.string(),
   createdAt: z.date(),
@@ -37,7 +39,7 @@ export const categoryRouter = router({
 
       return formatDocument<Category>(categorySnapshot);
     }),
-  getMany: privateProcedure
+  getMany: publicProcedure
     .input(z.object({ blogId: z.string() }))
     .query(async ({ input }) => {
       const { blogId } = input;
@@ -61,7 +63,9 @@ export const categoryRouter = router({
     .input(createCategorySchema)
     .mutation(async ({ input }) => {
       const [, error] = await tryCatch(
-        db.collection(collections.categories).add(input)
+        db
+          .collection(collections.categories)
+          .add({ ...input, url: toUrlFormat(input.name) })
       );
 
       if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
@@ -74,7 +78,13 @@ export const categoryRouter = router({
       const { id, ...inputWithoutId } = input;
 
       const [, error] = await tryCatch(
-        db.collection(collections.categories).doc(id).update(inputWithoutId)
+        db
+          .collection(collections.categories)
+          .doc(id)
+          .update({
+            ...inputWithoutId,
+            url: toUrlFormat(inputWithoutId.name ?? ''),
+          })
       );
 
       if (error) throw new TRPCError({ code: 'BAD_REQUEST', message: error });
