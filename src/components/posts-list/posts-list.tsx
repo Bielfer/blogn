@@ -36,14 +36,14 @@ const PostsList: FC<Props> = ({ columns = 1, className, posts }) => {
   return (
     <div
       className={cn(
-        'grid grid-cols-1 gap-x-8 gap-y-16',
+        'grid grid-cols-1 place-items-center gap-x-8 gap-y-16',
         className,
         columnsStyles[columns]
       )}
     >
       {posts.map((post) => (
-        <Link key={post.id} href={post.href}>
-          <article className="flex max-w-xl flex-col items-start justify-between rounded-xl p-4 transition duration-150 hover:bg-gray-50">
+        <Link key={post.id} href={post.href} className="w-full max-w-xl">
+          <article className="flex flex-col items-start justify-between rounded-xl p-4 transition duration-150 hover:bg-gray-50">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
               <time dateTime={post.datetime} className="text-gray-500">
                 {post.date}
