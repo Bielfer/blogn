@@ -13,6 +13,7 @@ export const routes = {
   appCategoriesNew: '/categories/new',
   appCategoriesEdit: (categoryId: string) => `/categories/${categoryId}`,
   blogPost: (postId: string) => `/${postId}`,
+  blogCategories: (categoryName: string) => `/categories/${categoryName}`,
 } as const;
 
 export const dashboardRoutes = [
