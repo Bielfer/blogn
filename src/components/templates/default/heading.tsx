@@ -57,9 +57,7 @@ const TemplateDefaultHeading: FC<Props> = async ({ blog }) => {
           )}
           <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
-              <h1 className="truncate text-2xl font-bold text-gray-900">
-                {name}
-              </h1>
+              <h1>{name}</h1>
             </div>
             {!!links && (
               <div className="mt-6 flex gap-x-4">
@@ -84,10 +82,10 @@ const TemplateDefaultHeading: FC<Props> = async ({ blog }) => {
           </div>
         </div>
         <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
-          <h1 className="truncate text-2xl font-bold text-gray-900">{name}</h1>
+          <h1>{name}</h1>
         </div>
       </Container>
-      <Container smallerContainer smallerContainerSize="max-w-xl">
+      <Container smallerContainer smallerContainerSize="max-w-2xl">
         <nav className="flex flex-wrap space-x-4 pt-10" aria-label="Tabs">
           {categories.map((category) => (
             <Link href={routes.blogCategories(category.url)} key={category.id}>
