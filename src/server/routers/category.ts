@@ -3,7 +3,11 @@ import { z } from 'zod';
 import { db } from '~/services/firebase/admin';
 import { collections } from '~/lib/constants/firebase';
 import { TRPCError } from '@trpc/server';
-import { formatDocument, snapshotToArray } from '~/lib/helpers/firebase';
+import {
+  conditionalWheres,
+  formatDocument,
+  snapshotToArray,
+} from '~/lib/helpers/firebase';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { getCreateSchema, getUpdateSchema } from '~/lib/helpers/zod';
 import { toUrlFormat } from '~/lib/helpers/string';
@@ -40,14 +44,15 @@ export const categoryRouter = router({
       return formatDocument<Category>(categorySnapshot);
     }),
   getMany: publicProcedure
-    .input(z.object({ blogId: z.string() }))
+    .input(z.object({ blogId: z.string(), url: z.string().optional() }))
     .query(async ({ input }) => {
-      const { blogId } = input;
+      const { blogId, url } = input;
 
       const [categoriesSnapshot, error] = await tryCatch(
-        db
-          .collection(collections.categories)
-          .where('blogId', '==', blogId)
+        conditionalWheres(db.collection(collections.categories), [
+          ['blogId', '==', blogId],
+          ['url', '==', url],
+        ])
           .orderBy('name', 'asc')
           .get()
       );
