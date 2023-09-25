@@ -5,13 +5,32 @@ import Container from '~/components/container';
 import TemplateDefaultFooter from './footer';
 import { env } from '~/env.mjs';
 import Logo from '~/components/logo';
+import { type Post } from '~/server/routers/post';
+import PostsList from '~/components/posts-list';
+import { routes } from '~/lib/constants/routes';
+import { format } from 'date-fns';
+import { type UserRecord } from 'firebase-admin/auth';
+import { publicImagesHref } from '~/lib/constants/public';
+import Pagination from '~/components/pagination';
+import { type PaginationProps } from '~/components/pagination/pagination';
+import EmptyState from '~/components/empty-state';
+import { type IconType } from 'react-icons';
 
 type Props = {
   blog: Blog;
-  children: ReactNode;
+  children?: ReactNode;
+  posts?: (Post & { author: UserRecord | undefined })[];
+  emptyState?: { title: string; icon?: IconType; subtitle?: string };
+  pagination?: PaginationProps;
 };
 
-const TemplateDefault: FC<Props> = ({ blog, children }) => {
+const TemplateDefault: FC<Props> = ({
+  blog,
+  children,
+  posts,
+  pagination,
+  emptyState,
+}) => {
   return (
     <>
       <TemplateDefaultHeading blog={blog} />
@@ -21,6 +40,37 @@ const TemplateDefault: FC<Props> = ({ blog, children }) => {
         smallerContainer
       >
         {children}
+        {!!posts &&
+          (posts.length > 0 ? (
+            <PostsList
+              posts={posts.map((post) => ({
+                id: post.id,
+                title: post.title || 'No title created',
+                href: routes.blogPost(post.id),
+                description: post.SEODescription || '',
+                date: format(post.publishedAt, 'MMM d, yyyy'),
+                datetime: format(post.publishedAt, 'yyyy-MM-dd'),
+                author: {
+                  name: post.author?.displayName ?? '',
+                  role: '',
+                  imageUrl: post.author?.photoURL ?? publicImagesHref.userIcon,
+                },
+                badges: post.categories.map((category) => ({
+                  text: category,
+                  color: 'gray',
+                  pill: true,
+                })),
+              }))}
+            />
+          ) : (
+            <EmptyState
+              className="mb-32 mt-20"
+              title={emptyState?.title ?? ''}
+              icon={emptyState?.icon}
+              subtitle={emptyState?.subtitle}
+            />
+          ))}
+        {!!pagination && <Pagination className="mb-10 mt-16" {...pagination} />}
       </Container>
       <Container smallerContainerSize="max-w-5xl" smallerContainer>
         <TemplateDefaultFooter blog={blog} />
