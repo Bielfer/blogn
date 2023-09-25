@@ -1,21 +1,11 @@
 import { type OutputData } from '@editorjs/editorjs';
 import { useField } from 'formik';
 import type { FC } from 'react';
-import editorJsHtml from 'editorjs-html';
 import Container from '~/components/container';
 import Button from '~/components/button';
 import EmptyState from '~/components/empty-state';
 import { HiMiniArrowUturnLeft, HiOutlinePencilSquare } from 'react-icons/hi2';
-
-const toHtml = editorJsHtml({
-  delimiter: () => (
-    <div className="flex items-center justify-center gap-x-1">
-      <span className="text-lg">*</span>
-      <span className="text-lg">*</span>
-      <span className="text-lg">*</span>
-    </div>
-  ),
-});
+import { editorJsToHtml } from '~/lib/helpers/editor';
 
 type Props = {
   handleClose: () => void;
@@ -28,7 +18,7 @@ const PostPreview: FC<Props> = ({ handleClose }) => {
 
   let html: string[] | undefined;
 
-  if (postHasContent) html = toHtml.parse(data);
+  if (postHasContent) html = editorJsToHtml().parse(data);
 
   return (
     <>
