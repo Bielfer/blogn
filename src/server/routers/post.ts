@@ -44,6 +44,7 @@ const getPostsSchema = z.object({
   limit: z.number().min(1).max(20).optional().default(10),
   status: z.enum(postStatusValues).optional(),
   categories: z.string().array().optional(),
+  urlTitle: z.string().optional(),
 });
 
 export type GetPosts = z.infer<typeof getPostsSchema>;
@@ -75,12 +76,13 @@ export const postRouter = router({
       return { ...post, author };
     }),
   getMany: publicProcedure.input(getPostsSchema).query(async ({ input }) => {
-    const { blogId, cursor, limit, status, categories } = input;
+    const { blogId, cursor, limit, status, categories, urlTitle } = input;
 
     const postRef = conditionalWheres(db.collection(collections.posts), [
       ['blogId', '==', blogId],
       ['status', '==', status],
       ['categories', 'array-contains-any', categories],
+      ['urlTitle', '==', urlTitle],
     ]).orderBy('publishedAt', 'desc');
 
     const [postsSnapshot, error] = await tryCatch(
@@ -122,6 +124,65 @@ export const postRouter = router({
       count: postCount.data().count,
     };
   }),
+  getPreviousAndNext: publicProcedure
+    .input(
+      z.object({
+        blogId: z.string(),
+        status: z.enum(postStatusValues).optional(),
+        postId: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const { blogId, status, postId } = input;
+
+      const [postSnapshot, error] = await tryCatch(
+        db.collection(collections.posts).doc(postId).get()
+      );
+
+      if (error || !postSnapshot)
+        throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+
+      const [nextSnapshot, errorNext] = await tryCatch(
+        conditionalWheres(db.collection(collections.posts), [
+          ['blogId', '==', blogId],
+          ['status', '==', status],
+        ])
+          .orderBy('publishedAt', 'desc')
+          .endBefore(postSnapshot)
+          .limit(1)
+          .get()
+      );
+
+      if (!nextSnapshot || errorNext)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          cause: errorNext,
+        });
+
+      const [previousSnapshot, errorPrevious] = await tryCatch(
+        conditionalWheres(db.collection(collections.posts), [
+          ['blogId', '==', blogId],
+          ['status', '==', status],
+        ])
+          .orderBy('publishedAt', 'desc')
+          .startAfter(postSnapshot)
+          .limit(1)
+          .get()
+      );
+
+      if (!previousSnapshot || errorPrevious)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          cause: errorPrevious,
+        });
+
+      const posts = {
+        previous: snapshotToArray<Post>(previousSnapshot)[0],
+        next: snapshotToArray<Post>(nextSnapshot)[0],
+      };
+
+      return posts;
+    }),
   create: privateProcedure
     .input(createPostSchema)
     .mutation(async ({ input }) => {
