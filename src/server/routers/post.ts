@@ -38,6 +38,16 @@ export type Post = z.infer<typeof postSchema>;
 export const createPostSchema = getCreateSchema(postSchema);
 export const updatePostSchema = getUpdateSchema(postSchema);
 
+const getPostsSchema = z.object({
+  blogId: z.string(),
+  cursor: z.number().optional().default(1),
+  limit: z.number().min(1).max(20).optional().default(10),
+  status: z.enum(postStatusValues).optional(),
+  categories: z.string().array().optional(),
+});
+
+export type GetPosts = z.infer<typeof getPostsSchema>;
+
 export const postRouter = router({
   get: privateProcedure
     .input(
@@ -64,62 +74,54 @@ export const postRouter = router({
 
       return { ...post, author };
     }),
-  getMany: publicProcedure
-    .input(
-      z.object({
-        blogId: z.string(),
-        cursor: z.number().optional().default(1),
-        limit: z.number().min(1).max(20).optional().default(10),
-        status: z.enum(postStatusValues).optional(),
-      })
-    )
-    .query(async ({ input }) => {
-      const { blogId, cursor, limit, status } = input;
+  getMany: publicProcedure.input(getPostsSchema).query(async ({ input }) => {
+    const { blogId, cursor, limit, status, categories } = input;
 
-      const postRef = conditionalWheres(db.collection(collections.posts), [
-        ['blogId', '==', blogId],
-        ['status', '==', status],
-      ]).orderBy('publishedAt', 'desc');
+    const postRef = conditionalWheres(db.collection(collections.posts), [
+      ['blogId', '==', blogId],
+      ['status', '==', status],
+      ['categories', 'array-contains-any', categories],
+    ]).orderBy('publishedAt', 'desc');
 
-      const [postsSnapshot, error] = await tryCatch(
-        postRef
-          .offset((cursor - 1) * limit)
-          .limit(limit)
-          .get()
-      );
+    const [postsSnapshot, error] = await tryCatch(
+      postRef
+        .offset((cursor - 1) * limit)
+        .limit(limit)
+        .get()
+    );
 
-      if (error || !postsSnapshot)
-        throw new TRPCError({ code: 'BAD_REQUEST', message: error });
+    if (error || !postsSnapshot)
+      throw new TRPCError({ code: 'BAD_REQUEST', message: error });
 
-      const posts = snapshotToArray<Post>(postsSnapshot);
+    const posts = snapshotToArray<Post>(postsSnapshot);
 
-      const authorsUid = [...new Set(posts.map((post) => post.authorUid))].map(
-        (uid) => ({ uid })
-      );
+    const authorsUid = [...new Set(posts.map((post) => post.authorUid))].map(
+      (uid) => ({ uid })
+    );
 
-      const [authors, errorGettingAuthors] = await tryCatch(
-        auth.getUsers(authorsUid)
-      );
+    const [authors, errorGettingAuthors] = await tryCatch(
+      auth.getUsers(authorsUid)
+    );
 
-      if (errorGettingAuthors || !authors)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          cause: errorGettingAuthors,
-        });
+    if (errorGettingAuthors || !authors)
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        cause: errorGettingAuthors,
+      });
 
-      const [postCount, errorPostCount] = await tryCatch(postRef.count().get());
+    const [postCount, errorPostCount] = await tryCatch(postRef.count().get());
 
-      if (errorPostCount || !postCount)
-        throw new TRPCError({ code: 'BAD_REQUEST', cause: errorPostCount });
+    if (errorPostCount || !postCount)
+      throw new TRPCError({ code: 'BAD_REQUEST', cause: errorPostCount });
 
-      return {
-        posts: posts.map((post) => ({
-          ...post,
-          author: authors.users.find((user) => user.uid === post.authorUid),
-        })),
-        count: postCount.data().count,
-      };
-    }),
+    return {
+      posts: posts.map((post) => ({
+        ...post,
+        author: authors.users.find((user) => user.uid === post.authorUid),
+      })),
+      count: postCount.data().count,
+    };
+  }),
   create: privateProcedure
     .input(createPostSchema)
     .mutation(async ({ input }) => {
