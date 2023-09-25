@@ -87,6 +87,11 @@ const TemplateDefaultHeading: FC<Props> = async ({ blog }) => {
       </Container>
       <Container smallerContainer smallerContainerSize="max-w-2xl">
         <nav className="flex flex-wrap space-x-4 pt-10" aria-label="Tabs">
+          {categories.length > 0 && (
+            <Link href={routes.blogHome}>
+              <Badge pill>All</Badge>
+            </Link>
+          )}
           {categories.map((category) => (
             <Link href={routes.blogCategories(category.url)} key={category.id}>
               <Badge pill>{category.name}</Badge>
