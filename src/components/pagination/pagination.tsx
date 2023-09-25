@@ -4,14 +4,14 @@ import { HiMiniArrowLongLeft, HiMiniArrowLongRight } from 'react-icons/hi2';
 import { generateIntegerArray } from '~/lib/helpers/arrays';
 import cn from '~/lib/helpers/cn';
 
-type Props = {
+export type PaginationProps = {
   count: number;
   limit: number;
   page: number;
   className?: string;
 };
 
-const Pagination: FC<Props> = ({ count, limit, page, className }) => {
+const Pagination: FC<PaginationProps> = ({ count, limit, page, className }) => {
   const pageAmount = Math.ceil(count / limit);
   const pages = generateIntegerArray(1, pageAmount);
   const firstPages = pages.slice(0, 3);
