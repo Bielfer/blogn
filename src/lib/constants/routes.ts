@@ -12,6 +12,7 @@ export const routes = {
   appCategories: '/categories',
   appCategoriesNew: '/categories/new',
   appCategoriesEdit: (categoryId: string) => `/categories/${categoryId}`,
+  blogHome: '/',
   blogPost: (postId: string) => `/${postId}`,
   blogCategories: (categoryName: string) => `/categories/${categoryName}`,
 } as const;
