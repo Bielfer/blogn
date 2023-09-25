@@ -1,5 +1,6 @@
+import { type Metadata } from 'next';
 import { env } from '~/env.mjs';
-import { caller } from '~/server/routers/_app';
+import { type Blog } from '~/server/routers/blog';
 
 export const getDomains = (domain: string) => {
   const [devSubdomain] = domain.split('.');
@@ -26,17 +27,12 @@ export const getImageContentType = async (url: string) => {
 };
 
 export const generateBlogMetadata = async (params: {
-  domain: string;
+  blog: Blog;
   title: string;
-}) => {
-  const { title } = params;
-  const { domain, subdomain } = getDomains(params.domain);
+  description?: string;
+}): Promise<Metadata> => {
+  const { title, blog, description } = params;
 
-  const blogs = await caller.blog.getMany({
-    ...(!!subdomain ? { subdomain } : { domain }),
-  });
-
-  const blog = blogs[0];
   const photoUrlContentType = await getImageContentType(blog?.photoUrl ?? '');
   const fileType = photoUrlContentType?.split('/')[1];
 
@@ -44,6 +40,7 @@ export const generateBlogMetadata = async (params: {
     title: {
       absolute: blog?.name ? `${title} | ${blog.name}` : title,
     },
+    description,
     ...(blog?.photoUrl && {
       icons: {
         icon: `${blog.photoUrl}.${fileType}`,
