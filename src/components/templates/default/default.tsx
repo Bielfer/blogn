@@ -22,6 +22,7 @@ type Props = {
   posts?: (Post & { author: UserRecord | undefined })[];
   emptyState?: { title: string; icon?: IconType; subtitle?: string };
   pagination?: PaginationProps;
+  heading?: boolean;
 };
 
 const TemplateDefault: FC<Props> = ({
@@ -30,10 +31,11 @@ const TemplateDefault: FC<Props> = ({
   posts,
   pagination,
   emptyState,
+  heading,
 }) => {
   return (
     <>
-      <TemplateDefaultHeading blog={blog} />
+      {heading && <TemplateDefaultHeading blog={blog} />}
       <Container
         className="pt-6 sm:pt-12"
         smallerContainerSize="max-w-2xl"
@@ -46,7 +48,7 @@ const TemplateDefault: FC<Props> = ({
               posts={posts.map((post) => ({
                 id: post.id,
                 title: post.title || 'No title created',
-                href: routes.blogPost(post.id),
+                href: routes.blogPost(post.urlTitle),
                 description: post.SEODescription || '',
                 date: format(post.publishedAt, 'MMM d, yyyy'),
                 datetime: format(post.publishedAt, 'yyyy-MM-dd'),

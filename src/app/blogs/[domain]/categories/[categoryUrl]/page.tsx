@@ -62,6 +62,7 @@ const BlogCategoriesPage: FC<Props> = async ({ searchParams, params }) => {
         icon: HiOutlineNewspaper,
       }}
       pagination={{ count: postsData.count, limit: 10, page }}
+      heading
     >
       <h3>{category.name}</h3>
       {!!category.description && (
