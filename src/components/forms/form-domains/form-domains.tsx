@@ -24,6 +24,8 @@ const FormDomains: FC<Props> = ({ className, blog }) => {
   const router = useRouter();
   const { setSelectedBlog } = useBlog();
   const { mutateAsync: updateBlog } = trpc.blog.update.useMutation();
+  const { mutateAsync: addDomainToVercel } =
+    trpc.vercel.addDomain.useMutation();
 
   const initialValues = {
     domain: blog?.domain ?? '',
@@ -42,17 +44,22 @@ const FormDomains: FC<Props> = ({ className, blog }) => {
       return;
     }
 
-    const [updatedBlog, error] = await tryCatch(
-      updateBlog({ id: blog.id, domain: values.domain })
+    const [res, error] = await tryCatch(
+      Promise.all([
+        updateBlog({ id: blog.id, domain: values.domain }),
+        addDomainToVercel({ domain: values.domain }),
+      ])
     );
 
-    if (error || !updatedBlog) {
+    if (error || !res) {
       addToast({
         type: 'error',
         content: 'Failed to update domain, try refreshing the page',
       });
       return;
     }
+
+    const updatedBlog = res[0];
 
     setSelectedBlog(updatedBlog);
     router.push(routes.appBlogsSettingsDomains);
