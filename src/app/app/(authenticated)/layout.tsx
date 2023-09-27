@@ -15,7 +15,9 @@ export const AuthenticatedLayout: FC<Props> = async ({ children }) => {
 
   if (!user) redirect(routes.appSignIn);
 
-  await userHasBlogs(user);
+  const hasBlogs = await userHasBlogs(user);
+
+  if (!hasBlogs) redirect(routes.appBlogsNewFirst);
 
   return (
     <>

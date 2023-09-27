@@ -2,7 +2,7 @@ import { type User } from '~/store/user';
 import { tryCatch } from '../helpers/try-catch';
 import { db } from '~/services/firebase/admin';
 import { collections } from '../constants/firebase';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { routes } from '../constants/routes';
 import { headers } from 'next/headers';
 import { getDomains } from '../helpers/metadata';
@@ -10,6 +10,8 @@ import { caller } from '~/server/routers/_app';
 
 export const userHasBlogs = async (user: User) => {
   const pathname = headers().get('pathname');
+
+  if (!user) return false;
 
   const [countSnapshot, error] = await tryCatch(
     db
@@ -23,7 +25,9 @@ export const userHasBlogs = async (user: User) => {
     (error || !countSnapshot || countSnapshot.data().count === 0) &&
     pathname !== routes.appBlogsNewFirst
   )
-    redirect(routes.appBlogsNewFirst);
+    return false;
+
+  return true;
 };
 
 export const getBlogByDomain = async (params: { domain: string }) => {
