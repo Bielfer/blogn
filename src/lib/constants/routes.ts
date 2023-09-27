@@ -1,5 +1,7 @@
 export const routes = {
   appHome: '/',
+  appFeatures: '#features',
+  appPricing: '#pricing',
   appPosts: '/posts',
   appPostEdit: (postId: string) => `/posts/${postId}`,
   appSignIn: '/sign-in',
