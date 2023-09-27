@@ -5,11 +5,16 @@ import { type Blog } from '~/server/routers/blog';
 export const getDomains = (domain: string) => {
   const [devSubdomain] = domain.split('.');
 
+  const appUrl = env.NEXT_PUBLIC_APP_URL.replace('http://', '').replace(
+    'https://',
+    ''
+  );
+
   const subdomain =
     env.NODE_ENV === 'development'
       ? devSubdomain
-      : domain.endsWith(`.${env.NEXT_PUBLIC_APP_URL}`)
-      ? domain.replace(`.${env.NEXT_PUBLIC_APP_URL}`, '')
+      : domain.endsWith(`.${appUrl}`)
+      ? domain.replace(`.${appUrl}`, '')
       : null;
 
   return {
