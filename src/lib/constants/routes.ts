@@ -7,7 +7,6 @@ export const routes = {
   appSignIn: '/sign-in',
   appSignUp: '/sign-up',
   appBlogsNew: '/blogs/new',
-  appBlogsNewFirst: '/blogs/new/first',
   appBlogsSettings: '/blogs/settings',
   appBlogsSettingsDomains: '/blogs/settings/domains',
   appBlogsSettingsDomainsEdit: '/blogs/settings/domains/edit',
