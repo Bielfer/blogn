@@ -33,8 +33,8 @@ const BlogSwitcher: FC<Props> = ({ className }) => {
   const filteredBlogs = blogs.filter((blog) => blog.id !== selectedBlog?.id);
 
   return (
-    <div className={cn('flex items-center gap-x-3', className)}>
-      <div className="hidden px-5 text-2xl font-light text-gray-200 sm:block">
+    <div className={cn('flex items-center gap-x-1', className)}>
+      <div className="hidden px-3 text-2xl font-light text-gray-200 sm:block">
         /
       </div>
       <MyPopover
@@ -74,7 +74,7 @@ const BlogSwitcher: FC<Props> = ({ className }) => {
           },
         ]}
       />
-      <div className="hidden px-5 text-2xl font-light text-gray-200 sm:block">
+      <div className="hidden px-3 text-2xl font-light text-gray-200 sm:block">
         /
       </div>
     </div>
