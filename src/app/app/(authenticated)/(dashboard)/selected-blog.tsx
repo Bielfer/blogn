@@ -2,6 +2,7 @@
 import type { FC, ReactNode } from 'react';
 import Button from '~/components/button';
 import DescriptionList from '~/components/description-list';
+import Spinner from '~/components/spinner';
 import { trpc } from '~/lib/trpc';
 import { useBlog, useUser } from '~/store';
 
@@ -12,11 +13,13 @@ type Props = {
 const SelectedBlog: FC<Props> = ({ children }) => {
   const { user } = useUser();
   const { setSelectedBlog } = useBlog();
-  const { data: blogs } = trpc.blog.getMany.useQuery(
+  const { data: blogs, isLoading } = trpc.blog.getMany.useQuery(
     { ownerUid: user?.uid },
     { enabled: !!user }
   );
   const { selectedBlog } = useBlog();
+
+  if (isLoading) return <Spinner className="mx-auto" />;
 
   if (!selectedBlog)
     return (
