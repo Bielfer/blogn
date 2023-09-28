@@ -7,6 +7,8 @@ export const env = createEnv({
     FIREBASE_SERVICE_ACCOUNT: z.string().min(1),
     VERCEL_TOKEN: z.string().min(1),
     VERCEL_PROJECT_ID: z.string().min(1),
+    CLOUDFLARE_ZONE_ID: z.string().min(1),
+    CLOUDFLARE_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_API_KEY: z.string().min(1),
@@ -30,6 +32,8 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     VERCEL_TOKEN: process.env.VERCEL_TOKEN,
     VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
+    CLOUDFLARE_ZONE_ID: process.env.CLOUDFLARE_ZONE_ID,
+    CLOUDFLARE_API_KEY: process.env.CLOUDFLARE_API_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
