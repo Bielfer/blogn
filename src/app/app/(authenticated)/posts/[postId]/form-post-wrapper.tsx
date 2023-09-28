@@ -18,7 +18,7 @@ const FormPostWrapper: FC<Props> = ({ postId }) => {
     }
   );
 
-  if (!post) return <Spinner page size="lg" />;
+  if (!post) return <Spinner page size="md" />;
 
   return (
     <LoadingWrapper isLoading={isLoading} page>
