@@ -40,6 +40,10 @@ const FormBlog: FC<Props> = ({
   const { setSelectedBlog } = useBlog();
   const { mutateAsync: createBlog } = trpc.blog.create.useMutation();
   const { mutateAsync: updateBlog } = trpc.blog.update.useMutation();
+  const { mutateAsync: addSubdomainToCloudflare } =
+    trpc.cloudflare.addDomain.useMutation();
+  const { mutateAsync: addSubdomainToVercel } =
+    trpc.vercel.addDomain.useMutation();
 
   const initialValues = {
     name: blog?.name ?? '',
@@ -105,17 +109,29 @@ const FormBlog: FC<Props> = ({
     }
 
     if (!!blog) {
-      [createdBlog, error] = await tryCatch(
-        updateBlog({
-          ...filteredValues,
-          id: blog.id,
-          photoUrl: url ?? photoUrl,
-        })
+      let res: any;
+      [res, error] = await tryCatch(
+        Promise.all([
+          updateBlog({
+            ...filteredValues,
+            id: blog.id,
+            photoUrl: url ?? photoUrl,
+          }),
+          addSubdomainToCloudflare({ subdomain: values.subdomain }),
+          addSubdomainToVercel({ domain: `${values.subdomain}.blogn.io` }),
+        ])
       );
+      createdBlog = res[0];
     } else {
-      [createdBlog, error] = await tryCatch(
-        createBlog({ ...filteredValues, editors: [], photoUrl: url ?? '' })
+      let res: any;
+      [res, error] = await tryCatch(
+        Promise.all([
+          createBlog({ ...filteredValues, editors: [], photoUrl: url ?? '' }),
+          addSubdomainToCloudflare({ subdomain: values.subdomain }),
+          addSubdomainToVercel({ domain: `${values.subdomain}.blogn.io` }),
+        ])
       );
+      createdBlog = res[0];
     }
 
     if (error) {
