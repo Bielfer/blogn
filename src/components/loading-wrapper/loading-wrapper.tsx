@@ -21,7 +21,7 @@ const LoadingWrapper: FC<Props> = ({
     return (
       <>
         <div className={clsx('flex justify-center', className)}>
-          <Spinner size="lg" page={page} />
+          <Spinner size="md" page={page} />
         </div>
         {hiddenChildren && <div className="hidden">{children}</div>}
       </>
