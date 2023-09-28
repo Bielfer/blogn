@@ -178,23 +178,19 @@ const FormSignIn: FC<Props> = ({ title, afterLoginUrl }) => {
             <Logo className="-ml-3 mb-2" />
             <h2>{title}</h2>
             <div className="flex flex-col py-6">
-              <Button
-                className="border"
-                iconLeft={FcGoogle}
-                onClick={handleGoogle}
-              >
+              <Button iconLeft={FcGoogle} onClick={handleGoogle}>
                 Continue with Google
               </Button>
             </div>
             <div className="flex items-center justify-between gap-x-4 pb-6">
               <div className="flex-grow border-b"></div>
-              <div className="text-sm text-gray-600">ou</div>
+              <div className="text-sm text-gray-600">or</div>
               <div className="flex-grow border-b"></div>
             </div>
             <FormikInput
               label="Your email"
               name="email"
-              placeholder="Ex: email@provider.com"
+              placeholder="email@provider.com"
             />
 
             <div className="flex justify-end pt-6">
