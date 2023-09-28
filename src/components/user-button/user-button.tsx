@@ -3,7 +3,7 @@ import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineCog8Tooth,
 } from 'react-icons/hi2';
-import { useUser } from '~/store';
+import { useBlog, useUser } from '~/store';
 import { useState, type FC } from 'react';
 import Modal from '../modal';
 import { publicImagesHref } from '~/lib/constants/public';
@@ -21,6 +21,7 @@ const UserButton: FC<Props> = ({ displayName = false }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
+  const { setSelectedBlog } = useBlog();
   const { mutateAsync } = trpc.auth.logout.useMutation();
 
   return (
@@ -51,6 +52,7 @@ const UserButton: FC<Props> = ({ displayName = false }) => {
             text: 'Sign Out',
             onClick: async () => {
               await mutateAsync();
+              setSelectedBlog(null);
               router.replace(routes.appHome);
             },
             onLeft: <HiOutlineArrowRightOnRectangle className="h-4 w-4" />,
