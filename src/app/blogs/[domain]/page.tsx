@@ -44,7 +44,7 @@ const BlogHome: FC<Props> = async ({ searchParams, params }) => {
       blog={blog}
       posts={postsData.posts}
       emptyState={{
-        title: 'There are no posts on this category',
+        title: 'There are no posts on this blog',
         icon: HiOutlineNewspaper,
       }}
       pagination={{ count: postsData.count, limit: 10, page }}
