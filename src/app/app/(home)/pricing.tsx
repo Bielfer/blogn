@@ -39,6 +39,7 @@ const tiers = [
       'Unlimited editors',
       'All Templates',
       'Optimized Images',
+      'No Blogn branding',
     ],
     mostPopular: false,
     buyMessage: 'Buy plan',
