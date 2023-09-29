@@ -64,10 +64,12 @@ const BlogCategoriesPage: FC<Props> = async ({ searchParams, params }) => {
       pagination={{ count: postsData.count, limit: 10, page }}
       heading
     >
-      <h3>{category.name}</h3>
-      {!!category.description && (
-        <p className="pt-3 text-sm text-gray-500">{category.description}</p>
-      )}
+      <div className="pb-8">
+        <h3>{category.name}</h3>
+        {!!category.description && (
+          <p className="pt-3 text-sm text-gray-500">{category.description}</p>
+        )}
+      </div>
     </TemplateDefault>
   );
 };
