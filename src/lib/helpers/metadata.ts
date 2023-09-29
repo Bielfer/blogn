@@ -23,7 +23,9 @@ export const getDomains = (domain: string) => {
   };
 };
 
-export const getImageContentType = async (url: string) => {
+export const getImageContentType = async (url?: string) => {
+  if (!url) return null;
+
   const response = await fetch(url, {
     method: 'HEAD',
   });
@@ -38,28 +40,27 @@ export const generateBlogMetadata = async (params: {
 }): Promise<Metadata> => {
   const { title, blog, description } = params;
 
-  const photoUrlContentType = await getImageContentType(blog?.photoUrl ?? '');
-  const fileType = photoUrlContentType?.split('/')[1];
+  const photoUrlContentType = await getImageContentType(blog.photoUrl);
 
   return {
     title: {
       absolute: blog?.name ? `${title} | ${blog.name}` : title,
     },
     description,
-    ...(blog?.photoUrl && {
+    ...(!!blog?.photoUrl && {
       icons: {
-        icon: `${blog.photoUrl}.${fileType}`,
+        icon: blog.photoUrl,
         shortcut: {
-          url: `${blog.photoUrl}`,
+          url: blog.photoUrl,
           type: photoUrlContentType ?? '',
         },
         apple: {
-          url: `${blog.photoUrl}`,
+          url: blog.photoUrl,
           type: photoUrlContentType ?? '',
         },
         other: {
           rel: 'icon',
-          url: `${blog.photoUrl}`,
+          url: blog.photoUrl,
           type: photoUrlContentType ?? '',
         },
       },
