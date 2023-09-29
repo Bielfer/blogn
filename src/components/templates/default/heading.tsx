@@ -39,7 +39,7 @@ const TemplateDefaultHeading: FC<Props> = async ({ blog }) => {
         <div
           className={cn(
             'sm:flex sm:items-end sm:space-x-5',
-            !!bannerUrl && '-mt-12 sm:-mt-16'
+            !!bannerUrl ? '-mt-12 sm:-mt-16' : 'mt-10'
           )}
         >
           {!!photoUrl && (
