@@ -3,12 +3,10 @@ import {
   type CollectionReference,
   type DocumentData,
 } from 'firebase-admin/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { storage } from '~/services/firebase/client';
-import { type ObjectValues } from '~/types/core';
 import { type BaseDocument } from '~/types/firebase';
-import { type bucketPaths } from '../constants/firebase';
-import { v4 as uuidv4 } from 'uuid';
+import { tryCatch } from './try-catch';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { storage } from '~/services/firebase/client';
 
 export const conditionalWheres = (
   docRef: CollectionReference<DocumentData>,
@@ -66,15 +64,34 @@ export const isTimestamp = (timestamp: any) =>
   (('seconds' in timestamp && 'nanoseconds' in timestamp) ||
     ('_seconds' in timestamp && '_nanoseconds' in timestamp));
 
-export const uploadFile = async (
-  file: Blob,
-  path: ObjectValues<typeof bucketPaths>
-) => {
-  const storageRef = ref(storage, `${path}/${uuidv4()}`);
+export const uploadFile = async ({
+  signedUrl,
+  file,
+  fileName,
+}: {
+  signedUrl?: string | null;
+  file: Blob;
+  fileName?: string;
+}) => {
+  if (!signedUrl) return null;
 
-  await uploadBytes(storageRef, file);
+  const [, error] = await tryCatch(
+    fetch(signedUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type,
+      },
+      body: file,
+    })
+  );
 
-  const url = await getDownloadURL(storageRef);
+  if (error) return null;
 
-  return { url };
+  const [downloadUrl, errorDownloadUrl] = await tryCatch(
+    getDownloadURL(ref(storage, fileName))
+  );
+
+  if (errorDownloadUrl || !downloadUrl) return null;
+
+  return downloadUrl;
 };

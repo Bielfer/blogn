@@ -13,6 +13,7 @@ import { useToast } from '~/store';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { uploadFile } from '~/lib/helpers/firebase';
 import { bucketPaths } from '~/lib/constants/firebase';
+import { trpc } from '~/lib/trpc';
 
 const Editor: FC = () => {
   const holder = 'container';
@@ -20,6 +21,7 @@ const Editor: FC = () => {
     useField<OutputData>('content');
   const ref = useRef<EditorJS>();
   const { addToast } = useToast();
+  const { mutateAsync: getSignedUrl } = trpc.file.image.useMutation();
 
   useEffect(() => {
     if (!ref.current) {
@@ -59,11 +61,28 @@ const Editor: FC = () => {
             config: {
               uploader: {
                 uploadByFile: async (file: File) => {
-                  const [res, error] = await tryCatch(
-                    uploadFile(file, bucketPaths.posts)
+                  const [image, errorUrl] = await tryCatch(
+                    getSignedUrl({
+                      bucketPath: bucketPaths.blogs,
+                      contentType: file.type,
+                    })
                   );
 
-                  if (error || !res?.url) {
+                  if (errorUrl) {
+                    addToast({
+                      type: 'error',
+                      content: 'Failed to upload file',
+                    });
+                    return { success: 0 };
+                  }
+
+                  const url = await uploadFile({
+                    file,
+                    signedUrl: image?.signedUrl,
+                    fileName: image?.fileName,
+                  });
+
+                  if (!url) {
                     addToast({
                       type: 'error',
                       content: 'Failed to upload file',
@@ -74,7 +93,7 @@ const Editor: FC = () => {
                   return {
                     success: 1,
                     file: {
-                      url: res.url,
+                      url,
                     },
                   };
                 },

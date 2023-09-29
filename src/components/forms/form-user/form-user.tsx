@@ -11,14 +11,15 @@ import FormikInput from '../formik-input';
 import { hints } from '~/lib/constants/validations';
 import Button from '~/components/button';
 import { tryCatch } from '~/lib/helpers/try-catch';
-import { bucketPaths } from '~/lib/constants/firebase';
 import { uploadFile } from '~/lib/helpers/firebase';
 import { keyPicker } from '~/lib/helpers/object';
+import { bucketPaths } from '~/lib/constants/firebase';
 
 const FormUser: FC = () => {
   const { user, setUser } = useUser();
   const { addToast } = useToast();
   const { mutateAsync: updateUser } = trpc.user.update.useMutation();
+  const { mutateAsync: getSignedUrl } = trpc.file.image.useMutation();
 
   const initialValues = {
     displayName: user?.displayName ?? '',
@@ -35,10 +36,22 @@ const FormUser: FC = () => {
   const handleSubmit = async (values: z.infer<typeof validationSchema>) => {
     const { photoFile, photoURL, ...filteredValues } = values;
     let error: any,
-      res: { url: string } | null = null;
+      url: string | null = null;
 
     if (!!photoFile) {
-      [res, error] = await tryCatch(uploadFile(photoFile, bucketPaths.users));
+      const [image, errorUrl] = await tryCatch(
+        getSignedUrl({
+          bucketPath: bucketPaths.users,
+          contentType: photoFile.type,
+        })
+      );
+      error = errorUrl;
+
+      url = await uploadFile({
+        file: photoFile,
+        signedUrl: image?.signedUrl,
+        fileName: image?.fileName,
+      });
     }
 
     if (error) {
@@ -52,7 +65,7 @@ const FormUser: FC = () => {
     const [updatedUser, errorUpdating] = await tryCatch(
       updateUser({
         ...filteredValues,
-        photoURL: res?.url ?? photoURL,
+        photoURL: url ?? photoURL,
         uid: user?.uid ?? '',
       })
     );

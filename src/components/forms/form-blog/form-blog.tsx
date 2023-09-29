@@ -44,6 +44,7 @@ const FormBlog: FC<Props> = ({
     trpc.cloudflare.addDomain.useMutation();
   const { mutateAsync: addSubdomainToVercel } =
     trpc.vercel.addDomain.useMutation();
+  const { mutateAsync: getSignedUrl } = trpc.file.image.useMutation();
 
   const initialValues = {
     name: blog?.name ?? '',
@@ -90,14 +91,24 @@ const FormBlog: FC<Props> = ({
       return;
     }
 
-    let url: string | undefined,
+    let url: string | null = null,
       error: any,
-      res: { url: string } | null = null,
       createdBlog: Blog | null = null;
 
     if (!!photoFile) {
-      [res, error] = await tryCatch(uploadFile(photoFile, bucketPaths.blogs));
-      url = res?.url;
+      const [image, errorUrl] = await tryCatch(
+        getSignedUrl({
+          bucketPath: bucketPaths.blogs,
+          contentType: photoFile.type,
+        })
+      );
+      error = errorUrl;
+
+      url = await uploadFile({
+        file: photoFile,
+        signedUrl: image?.signedUrl,
+        fileName: image?.fileName,
+      });
     }
 
     if (error) {
