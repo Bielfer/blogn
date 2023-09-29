@@ -6,6 +6,7 @@ import { categoryRouter } from './category';
 import { userRouter } from './user';
 import { vercelRouter } from './vercel';
 import { cloudflareRouter } from './cloudflare';
+import { fileRouter } from './file';
 
 const appRouter = router({
   post: postRouter,
@@ -15,6 +16,7 @@ const appRouter = router({
   user: userRouter,
   vercel: vercelRouter,
   cloudflare: cloudflareRouter,
+  file: fileRouter,
 });
 
 export type AppRouter = typeof appRouter;
