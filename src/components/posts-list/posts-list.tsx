@@ -42,7 +42,7 @@ const PostsList: FC<Props> = ({ columns = 1, className, posts }) => {
       )}
     >
       {posts.map((post) => (
-        <Link key={post.id} href={post.href} className="w-full max-w-xl">
+        <Link key={post.id} href={post.href} className="w-full">
           <article className="flex flex-col items-start justify-between rounded-xl p-4 transition duration-150 hover:bg-gray-50">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
               <time dateTime={post.datetime} className="text-gray-500">
