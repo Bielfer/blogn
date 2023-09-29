@@ -63,7 +63,7 @@ const Editor: FC = () => {
                 uploadByFile: async (file: File) => {
                   const [image, errorUrl] = await tryCatch(
                     getSignedUrl({
-                      bucketPath: bucketPaths.blogs,
+                      bucketPath: bucketPaths.posts,
                       contentType: file.type,
                     })
                   );
