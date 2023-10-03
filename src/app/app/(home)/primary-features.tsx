@@ -6,22 +6,20 @@ import clsx from 'clsx';
 
 const features = [
   {
-    title: 'Escala',
-    description:
-      'Você consegue acompanhar a escala de todos os seus funcionários',
-    image: '/screenshots/schedule.png',
+    title: 'Blogs',
+    description: 'You can have as many blogs as you want',
+    image: '/screenshots/blog.png',
   },
   {
-    title: 'Histórico de Pontos',
-    description:
-      'Você consegue saber exatamente a hora que seus funcionários bateram o ponto',
-    image: '/screenshots/clock-ins.png',
+    title: 'Editor',
+    description: 'Create and edit your posts on a notion like experience',
+    image: '/screenshots/editor.png',
   },
   {
-    title: 'Ponto Digital',
+    title: 'Posts',
     description:
-      'Seu funcionário pode bater o ponto do próprio celular, sem precisar comprar nenhuma máquina de pontos',
-    image: '/screenshots/employee-clock-ins.png',
+      'After creating your content we set up most of your SEO necessities',
+    image: '/screenshots/post.png',
   },
 ];
 
