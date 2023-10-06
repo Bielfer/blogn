@@ -48,6 +48,12 @@ const PostSettings: FC = () => {
       />
 
       <FormikDate name="publishedAt" label="Publish Date" />
+      <FormikChoose
+        label="Keywords"
+        name="keywords"
+        help="You can set the keywords meta tag, but keep in mind that most search engines don't use it anymore"
+        options={[]}
+      />
     </div>
   );
 };

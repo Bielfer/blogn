@@ -27,7 +27,7 @@ export const generateMetadata = async ({
     description: post.SEODescription,
   });
 
-  return metadata;
+  return { ...metadata, keywords: post.keywords };
 };
 
 const PostPage: FC<Props> = async ({ params }) => {

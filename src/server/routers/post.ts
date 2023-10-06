@@ -26,6 +26,7 @@ const postSchema = z.object({
   SEOTitle: z.string(),
   SEODescription: z.string().default(''),
   status: z.enum(postStatusValues).default(postStatus.draft),
+  keywords: z.string().array().optional(),
   authorUid: z.string(),
   publishedAt: z.date().default(new Date()),
   categories: z.string().array().default([]),
