@@ -28,3 +28,7 @@ export const settingsRoutes = [
   { name: 'General', href: routes.appBlogsSettings },
   { name: 'Domains', href: routes.appBlogsSettingsDomains },
 ];
+
+export const blogPosts = {
+  domainSetup: 'https://blog.blogn.io/how-to-set-up-your-own-domain-on-blogn',
+};

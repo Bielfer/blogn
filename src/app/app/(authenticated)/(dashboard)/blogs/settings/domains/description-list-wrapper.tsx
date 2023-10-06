@@ -5,7 +5,7 @@ import Button from '~/components/button';
 import DescriptionList from '~/components/description-list';
 import LoadingWrapper from '~/components/loading-wrapper';
 import MyLink from '~/components/my-link';
-import { routes } from '~/lib/constants/routes';
+import { blogPosts, routes } from '~/lib/constants/routes';
 import { tryCatch } from '~/lib/helpers/try-catch';
 import { trpc } from '~/lib/trpc';
 import { useBlog, useToast } from '~/store';
@@ -69,46 +69,59 @@ const DescriptionListWrapper: FC = () => {
 
   return (
     <LoadingWrapper isLoading={isLoadingBlog}>
-      <DescriptionList
-        title="Domains"
-        items={[
-          {
-            name: 'Subdomain',
-            content: !!blog?.subdomain
-              ? `${blog.subdomain}.blogn.me`
-              : 'No subdomain added',
-            onRight: (
-              <MyLink href={routes.appBlogsSettings} variant="primary">
-                Update
-              </MyLink>
-            ),
-          },
-          {
-            name: 'Domain',
-            content: !!blog?.domain ? blog.domain : 'No domain added',
-            onRight: (
-              <>
-                <div className="mr-3 inline border-r pr-3">
-                  <Button
-                    className="inline-flex items-center gap-x-1"
-                    variant="link-primary"
-                    onClick={() => handleCheckDomain(blog?.domain)}
-                    loading={isLoadingCheck}
-                  >
-                    Check<span className="hidden sm:inline"> Domain</span>
-                  </Button>
-                </div>
-                <MyLink
-                  href={routes.appBlogsSettingsDomainsEdit}
-                  variant="primary"
-                >
+      <>
+        <DescriptionList
+          title="Domains"
+          subtitle="There are 2 steps to setting up your domain, the first one is on our platform, by clicking on the update button. After saving your domain on our platform you just have to point your domain to us. If you don't know how to do it you can click on the link at the end of the page"
+          items={[
+            {
+              name: 'Subdomain',
+              content: !!blog?.subdomain
+                ? `${blog.subdomain}.blogn.io`
+                : 'No subdomain added',
+              onRight: (
+                <MyLink href={routes.appBlogsSettings} variant="primary">
                   Update
                 </MyLink>
-              </>
-            ),
-          },
-        ]}
-      />
+              ),
+            },
+            {
+              name: 'Domain',
+              content: !!blog?.domain ? blog.domain : 'No domain added',
+              onRight: (
+                <>
+                  <div className="mr-3 inline border-r pr-3">
+                    <Button
+                      className="inline-flex items-center gap-x-1"
+                      variant="link-primary"
+                      onClick={() => handleCheckDomain(blog?.domain)}
+                      loading={isLoadingCheck}
+                    >
+                      Check<span className="hidden sm:inline"> Domain</span>
+                    </Button>
+                  </div>
+                  <MyLink
+                    href={routes.appBlogsSettingsDomainsEdit}
+                    variant="primary"
+                  >
+                    Update
+                  </MyLink>
+                </>
+              ),
+            },
+          ]}
+        />
+        <p className="mt-6 flex items-center gap-x-3 text-sm text-gray-600">
+          Don&apos;t know how to set up your domain?
+          <MyLink
+            href={blogPosts.domainSetup}
+            variant="primary"
+            target="_blank"
+          >
+            Click here
+          </MyLink>
+        </p>
+      </>
     </LoadingWrapper>
   );
 };
