@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
 import Link from 'next/link';
-import clsx from 'clsx';
 import { type Concat } from '~/types/core';
 import { type Url } from 'url';
 import Spinner from '../spinner';
@@ -9,6 +8,7 @@ import {
   buttonAndLinkStyles,
 } from '~/lib/constants/styles';
 import { type IconType } from 'react-icons';
+import cn from '~/lib/helpers/cn';
 
 export type MyLinkProps = {
   className?: string;
@@ -23,6 +23,7 @@ export type MyLinkProps = {
   onClick?: () => void;
   isLoading?: boolean;
   disabled?: boolean;
+  target?: string;
 };
 
 const MyLink: FC<MyLinkProps> = ({
@@ -45,7 +46,7 @@ const MyLink: FC<MyLinkProps> = ({
     <Link
       href={href}
       passHref
-      className={clsx(
+      className={cn(
         'inline-flex items-center whitespace-nowrap font-medium transition duration-200',
         linkStyles,
         buttonAndLinkStyles[isButton ? 'button' : 'link'][
