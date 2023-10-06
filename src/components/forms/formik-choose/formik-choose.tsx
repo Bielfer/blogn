@@ -9,9 +9,17 @@ type Props = {
   hint?: string;
   disabled?: boolean;
   options: { text: string; value: string }[] | undefined;
+  help?: string;
 };
 
-const FormikChoose: FC<Props> = ({ name, options, label, hint, disabled }) => {
+const FormikChoose: FC<Props> = ({
+  name,
+  options,
+  label,
+  hint,
+  disabled,
+  help,
+}) => {
   const [{ value }, { error, touched, initialValue }, { setValue }] =
     useField<string[]>(name);
   const [inputValue, setInputValue] = useState<string[]>(initialValue ?? []);
@@ -37,6 +45,7 @@ const FormikChoose: FC<Props> = ({ name, options, label, hint, disabled }) => {
           hint={hint}
           disabled={disabled}
           multiple
+          help={help}
         />
       </div>
       <div className="px-2">

@@ -20,6 +20,7 @@ type Props = {
   hint?: string;
   disabled?: boolean;
   multiple?: boolean;
+  help?: string;
 };
 
 const Autocomplete: FC<Props> = ({
@@ -34,6 +35,7 @@ const Autocomplete: FC<Props> = ({
   placeholder,
   label,
   multiple = false,
+  help,
 }) => {
   const [input, setInput] = useState(
     options.find((option) => option.value === selected)?.text ?? ''
@@ -53,6 +55,7 @@ const Autocomplete: FC<Props> = ({
       error={error}
       hint={hint}
       label={label}
+      help={help}
     >
       <Combobox
         value={selected}
