@@ -44,7 +44,7 @@ export const generateBlogMetadata = async (params: {
 
   return {
     title: {
-      absolute: blog?.name ? `${title} | ${blog.name}` : title,
+      absolute: `${title} | ${blog.name}`,
     },
     description,
     ...(!!blog?.photoUrl && {
@@ -65,5 +65,17 @@ export const generateBlogMetadata = async (params: {
         },
       },
     }),
+    openGraph: {
+      title: `${title} | ${blog.name}`,
+      description,
+      siteName: blog.name,
+      ...(!!blog.photoUrl && { images: [{ url: blog.photoUrl }] }),
+      type: 'website',
+    },
+    robots: {
+      googleBot: {
+        index: true,
+      },
+    },
   };
 };
