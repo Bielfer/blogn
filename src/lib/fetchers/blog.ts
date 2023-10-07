@@ -5,8 +5,9 @@ import { collections } from '../constants/firebase';
 import { notFound } from 'next/navigation';
 import { getDomains } from '../helpers/metadata';
 import { caller } from '~/server/routers/_app';
+import { cache } from 'react';
 
-export const userHasBlogs = async (user: User) => {
+export const userHasBlogs = cache(async (user: User) => {
   if (!user) return false;
 
   const [countSnapshot, error] = await tryCatch(
@@ -20,7 +21,7 @@ export const userHasBlogs = async (user: User) => {
   if (error || !countSnapshot || countSnapshot.data().count === 0) return false;
 
   return true;
-};
+});
 
 export const getBlogByDomain = async (params: { domain: string }) => {
   const { domain, subdomain } = getDomains(params.domain);

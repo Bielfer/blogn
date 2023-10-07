@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { cookiesKeys } from '../constants/cookies';
 import { tryCatch } from '../helpers/try-catch';
 import { auth } from '~/services/firebase/admin';
+import { cache } from 'react';
 
 export const isAuthenticated = async () => {
   const cookieStore = cookies();
@@ -22,7 +23,7 @@ export const isAuthenticated = async () => {
   return decodedSessionToken;
 };
 
-export const getUser = async () => {
+export const getUser = cache(async () => {
   const decodedIdToken = await isAuthenticated();
 
   if (!decodedIdToken) return;
@@ -36,4 +37,4 @@ export const getUser = async () => {
     ...(!!user.displayName && { displayName: user.displayName }),
     ...(!!user.photoURL && { photoURL: user.photoURL }),
   };
-};
+});
