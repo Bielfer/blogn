@@ -1,7 +1,6 @@
 /* eslint react-hooks/exhaustive-deps:off */
 import { useRef, type FC, useEffect, memo } from 'react';
 import EditorJS, { type OutputData } from '@editorjs/editorjs';
-import Code from '@editorjs/code';
 import Header from '@editorjs/header';
 import Paragraph from '@editorjs/paragraph';
 import Delimiter from '@editorjs/delimiter';
@@ -14,10 +13,11 @@ import { tryCatch } from '~/lib/helpers/try-catch';
 import { uploadFile } from '~/lib/helpers/firebase';
 import { bucketPaths } from '~/lib/constants/firebase';
 import { trpc } from '~/lib/trpc';
+import Code from './code';
 
 const Editor: FC = () => {
   const holder = 'container';
-  const [{ value: data }, {}, { setValue: setData }] =
+  const [{ value: data }, , { setValue: setData }] =
     useField<OutputData>('content');
   const ref = useRef<EditorJS>();
   const { addToast } = useToast();
@@ -29,7 +29,7 @@ const Editor: FC = () => {
         holder,
         tools: {
           code: {
-            class: Code,
+            class: Code as any,
             shortcut: 'CMD+SHIFT+C',
           },
           header: {
@@ -54,7 +54,7 @@ const Editor: FC = () => {
               captionPlaceholder: 'By John Doe',
             },
           },
-          list: { class: List, shortcut: 'CMD+SHIFT+L' },
+          list: { class: List, shortcut: 'CMD+SHIFT+L', inlineToolbar: true },
           image: {
             class: Image,
             shortcut: 'CMD+SHIFT+I',
@@ -113,6 +113,7 @@ const Editor: FC = () => {
         data,
         async onChange(api) {
           const editorData = await api.saver.save();
+
           await setData(editorData);
         },
         placeholder: 'You can press TAB to change blocks',
